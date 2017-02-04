@@ -3,8 +3,8 @@
 # overwritten when you run stepconf again
 loadrt trivkins
 loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES
-loadrt probe_parport
-loadrt hal_parport cfg="0xccf8 out 0x378 out"
+#loadrt probe_parport NOT NEEDED FOR linuxcnc 2.7
+loadrt hal_parport cfg="0xe880 out"
 setp parport.0.reset-time 5000
 loadrt stepgen step_type=0,0,0,0
 loadrt abs count=1
@@ -13,12 +13,13 @@ loadrt fuji_frenic_vfd
 loadusr -W mb2hal config=mb2hal.ini
 
 addf parport.0.read base-thread
-addf parport.1.read base-thread
+#Commented out below because we are running one port now
+#addf parport.1.read base-thread 
 addf stepgen.make-pulses base-thread
 addf charge-pump base-thread
 addf parport.0.write base-thread
 addf parport.0.reset base-thread
-addf parport.1.write base-thread
+#addf parport.1.write base-thread
 
 addf stepgen.capture-position servo-thread
 addf motion-command-handler servo-thread
