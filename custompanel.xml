@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<pyvcp>
+         <vbox>
+         <relief>RIDGE</relief>         
+         <bd>6</bd>
+                <label>
+                        <text>"Spindle Speed:"</text>
+                        <font>("Helvetica",20)</font>
+                </label>
+                <bar>
+                        <halpin>"spindle-speed"</halpin>
+                        <max_>20000</max_>
+                </bar>
+                <label>
+                        <text>"Spindle-At-Speed:"</text>
+                        <font>("Helvetica",20)</font>
+                </label>
+                <hbox>
+                    <label>
+                            <text>"             "</text>
+                            <font>("Helvetica",20)</font>
+                    </label>
+                    <led>
+                        <halpin>"spindle-at-speed-led"</halpin> 
+                        <size>30</size> 
+                        <on_color>"green"</on_color>
+                        <off_color>"red"</off_color>
+                    </led>
+                </hbox>
+                <scale>
+		    <font>("Helvetica",16)</font>
+		    <width>"25"</width>
+		    <halpin>"spindle-setting"</halpin>
+		    <resolution>0.1</resolution>
+		    <orient>HORIZONTAL</orient>
+		    <initval>-15</initval>
+		    <min_>0</min_>
+		    <max_>5700</max_>
+		</scale>
+                <scale>
+		    <font>("Helvetica",16)</font>
+		    <width>"25"</width>
+		    <halpin>"variator-setting"</halpin>
+		    <resolution>1</resolution>
+		    <orient>HORIZONTAL</orient>
+		    <initval>1900</initval>
+		    <min_>75</min_>
+		    <max_>3800</max_>
+		</scale>
+                <button>
+			<font>("Helvetica",20)</font>
+			<width>3</width>
+			<halpin>"estopreset"</halpin>
+			<text>"ESTOP RESET"</text>
+		</button>
+        </vbox>
+</pyvcp>

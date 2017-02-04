@@ -1,0 +1,18 @@
+# Include your customized HAL commands here
+# The commands in this file are run after the AXIS GUI (including PyVCP panel) starts
+
+# **** Setup of spindle speed display using pyvcp -START ****
+# **** Use COMMANDED spindle velocity from LinuxCNC because no spindle encoder was specified
+# **** COMANDED velocity is signed so we use absolute component (abs.0) to remove sign
+
+net spindle-cmd => abs.0.in
+net absolute-spindle-vel <= abs.0.out => pyvcp.spindle-speed
+
+# **** force spindle at speed indicator true because we have no feedback ****
+
+net spindle-at-speed => pyvcp.spindle-at-speed-led
+net spindle-cmd <= pyvcp.spindle-setting-f
+sets spindle-at-speed true
+net estopreset <= pyvcp.estopreset
+net variator-setting <= pyvcp.variator-setting-f
+
