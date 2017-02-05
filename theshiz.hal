@@ -30,6 +30,7 @@ addf fuji-frenic-vfd.0 servo-thread
 
 net spindle-at-speed => motion.spindle-at-speed
 
+setp parport.0.pin-03-out-invert 1
 net estop-out => parport.0.pin-01-out
 net xstep => parport.0.pin-02-out
 setp parport.0.pin-02-out-reset 1
