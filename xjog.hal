@@ -1,0 +1,4 @@
+setp axis.0.jog-scale 0.0025
+net jogwheel mb2hal.RegIn.01.int axis.0.jog-counts
+setp axis.0.jog-enable 1
+
