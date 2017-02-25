@@ -1,5 +1,6 @@
-T1 P1 D0.125000 Z-0.000000 ;1/8 end mill 
-T2 P2 D0.062500 Z+0.100000 ;1/16 end mill 
-T3 P3 D0.201000 Z+1.273000 ;#7 tap drill 
-T99999 P99999 Z+0.100000 ;big tool number 
-T4 P4 D0.350000 Z+0.607415 ;.350 mill 
+T1 P1 Z0 D0.125 ;1/8 end mill 
+T2 P2 Z0.1 D0.0625 ;1/16 end mill 
+T3 P3 Z1.273 D0.5 ;.5 end mill 
+T99999 P99999 Z0.1 ;big tool number 
+T4 P4 Z0.607415 D0.365 ;.365 mill 
+T6 P6 Z1.5 D0.25 ;0.25x0.75 center drill 

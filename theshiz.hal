@@ -12,6 +12,7 @@ loadrt stepgen step_type=0,0,0,0
 loadrt abs count=1
 loadrt charge_pump
 loadrt fuji_frenic_vfd
+loadrt hwpanel
 # Add a comparator component for the oiler
 loadrt comp names=LubePumpComp
 loadrt timedelay names=LubePumpOffDelay
@@ -38,6 +39,7 @@ addf motion-controller servo-thread
 addf stepgen.update-freq servo-thread
 addf abs.0 servo-thread
 addf fuji-frenic-vfd.0 servo-thread
+addf hwpanel.0 servo-thread
 # Oiler
 addf LubePumpComp servo-thread
 addf LubePumpOffDelay servo-thread
@@ -134,6 +136,9 @@ net vfdOperCmd <= fuji-frenic-vfd.0.operReg => mb2hal.node1.vfdOperCmd.00
 net spindle-fwd motion.spindle-forward => fuji-frenic-vfd.0.fwdCmd
 net spindle-rev motion.spindle-reverse => fuji-frenic-vfd.0.revCmd
 net variator-setting => fuji-frenic-vfd.0.nominalRPM
+
+# HARDWARE BUTTON PANEL
+net mb2hwpanel0 mb2hal.RegIn.00.int => hwpanel.0.reg0
 
 # This machine just needs to know the computer is alive so as soon as 
 # EMC is running, we enable the hardware estop system to perform its
