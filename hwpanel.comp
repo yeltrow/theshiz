@@ -1,0 +1,84 @@
+component hwpanel "Byte Bit converter for my custom hardware button panel";
+author "Matt Wortley";
+license "GPLv2 or later";
+description """This component converts responses and commands for an arduino button panel sitting on modbus """;
+
+pin in signed reg0 "float byte 0 returned by modbus";
+/*
+pin in bit resetCmd "bit sets Fault/Drive Reset Command to Drive";
+pin in bit fwdCmd "bit requests drive to run FWD" ;
+pin in bit revCmd "bit requests drive to run REV" ;
+pin in float nominalRPM "the variator setting" ;
+pin in float desiredRPM "desired drive RPM" ;
+*/
+
+/*
+param rw float nominalHz=60 "the design power frequency of the motor i.e. 60Hz";
+param rw float outputCountsPerHz=222.22 "speed register counts per Hz";
+param rw float outputCountsMax=20000 "speed register counts Max";
+param rw float outputCountsMin=0 "speed register counts Min";
+*/
+
+pin out bit FEEDHOLD "0 if latching button is pressed";
+pin out bit PAUSE "0 if pressed";
+pin out bit STEP "0 if pressed";
+pin out bit RUN "0 if pressed";
+pin out bit STOP "0 if pressed";
+pin out bit XBUT "0 if pressed";
+pin out bit YBUT "0 if pressed";
+pin out bit ZBUT "0 if pressed";
+pin out bit ABUT "0 if pressed";
+pin out bit KNEEBUT "0 if pressed";
+pin out bit NONEBUT "0 if pressed";
+pin out bit COOLANTON "0 if pressed";
+pin out bit COOLANTOFF "0 if pressed";
+pin out bit SPINDLEON "0 if pressed";
+pin out bit SPINDLEOFF "0 if pressed";
+pin out bit HEARTBEAT "should change if alive";
+
+function _ ;
+;;
+ 
+FUNCTION(_) {
+  int r0;
+  r0=reg0;
+  FEEDHOLD=(r0 & (1<<15));
+  r0=r0 << 1;
+  PAUSE=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  STEP =!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  RUN=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  STOP=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  XBUT=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  YBUT=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  ZBUT=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  ABUT=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  KNEEBUT=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  NONEBUT=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  COOLANTON=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  COOLANTOFF=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  SPINDLEON=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  SPINDLEOFF=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+  HEARTBEAT=!(r0 & ( 1<<15));
+  r0=r0 << 1;
+   
+} // End function
+int testfunc ( struct __comp_state *__comp_inst ) {
+  return 1;
+}
+
+
+
