@@ -16,3 +16,29 @@ sets spindle-at-speed true
 net estopreset <= pyvcp.estopreset
 net variator-setting <= pyvcp.variator-setting-f
 
+net hwpause hwpanel.0.FEEDHOLD => halui.program.pause
+net hwstep hwpanel.0.STEP => halui.program.step
+net hwrun hwpanel.0.PAUSE => halui.program.resume
+net hwstop hwpanel.0.STOP => halui.program.stop
+
+
+#define STEP 27
+#define RUN 28
+#define STOP 29
+#define MAXSPEED 15
+#define JOGA 30
+#define JOBB 31
+#define SPINDLEOVERRIDEA 32
+#define SPINDLEOVERRIDEB 33
+#define XBUT 41
+#define YBUT 40
+#define ZBUT 43
+#define ABUT 42
+#define KNEEBUT 45
+#define NONEBUT 44
+#define FEEDOVERRIDEA 46
+#define FEEDOVERRIDEB 47
+#define COOLANTON 49
+#define COOLANTOFF 48
+#define SPINDLEON 51
+#define SPINDLEOFF 50
