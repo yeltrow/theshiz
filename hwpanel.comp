@@ -1,23 +1,14 @@
-component hwpanel "Byte Bit converter for my custom hardware button panel";
+component hwpanel "Byte Bit converter packer unpacker for my custom hardware button panel";
+/* This component is compiled using halcompile --install hwpanel.comp
+** I have a control panel that is connected to an arduino.  The arduino sits on a USB cable that is talked
+** to by the mb2hal driver.  The arduino maps the io into the 16 bit registers modbus wants.  I could
+** have used hal to do the unpacking of bits and stuff, but it gets very messy.  I like C better.
+*/ 
 author "Matt Wortley";
 license "GPLv2 or later";
 description """This component converts responses and commands for an arduino button panel sitting on modbus """;
 
 pin in signed reg0 "float byte 0 returned by modbus";
-/*
-pin in bit resetCmd "bit sets Fault/Drive Reset Command to Drive";
-pin in bit fwdCmd "bit requests drive to run FWD" ;
-pin in bit revCmd "bit requests drive to run REV" ;
-pin in float nominalRPM "the variator setting" ;
-pin in float desiredRPM "desired drive RPM" ;
-*/
-
-/*
-param rw float nominalHz=60 "the design power frequency of the motor i.e. 60Hz";
-param rw float outputCountsPerHz=222.22 "speed register counts per Hz";
-param rw float outputCountsMax=20000 "speed register counts Max";
-param rw float outputCountsMin=0 "speed register counts Min";
-*/
 
 pin out bit FEEDHOLD "0 if latching button is pressed";
 pin out bit PAUSE "0 if pressed";
@@ -38,6 +29,11 @@ pin out bit HEARTBEAT "should change if alive";
 
 function _ ;
 ;;
+
+/* We check for a bit and then bitshift over to get the next one.
+** It looks a little silly, but it makes it so that all we need
+** to get right is the ORDER of the bits.  It makes it easier to modify.
+*/
  
 FUNCTION(_) {
   int r0;
@@ -74,6 +70,10 @@ FUNCTION(_) {
   r0=r0 << 1;
   HEARTBEAT=!(r0 & ( 1<<15));
   r0=r0 << 1;
+
+/* The below is just an example of how to add function into a component.
+** It doesn't do anything.
+*/
    
 } // End function
 int testfunc ( struct __comp_state *__comp_inst ) {

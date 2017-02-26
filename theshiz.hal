@@ -105,7 +105,7 @@ net ydir <= stepgen.1.dir
 net yenable axis.1.amp-enable-out => stepgen.1.enable
 
 setp stepgen.2.position-scale [AXIS_2]SCALE
-setp stepgen.2.steplen 1
+setp stepgen.2.steplen 10000
 setp stepgen.2.stepspace 0
 setp stepgen.2.dirhold 35000
 setp stepgen.2.dirsetup 35000
