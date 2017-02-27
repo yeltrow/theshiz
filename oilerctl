@@ -86,6 +86,10 @@ try:
         if(oilerDebounce > 0):
           h['oiler-cmd'] = 1
           oilerDebounce = oilerDebounce - 1
+          # If we are in the hold period and not moving, still accumulate
+          # time because we are oiling.
+          if(h['velocity'] <= h['velocity-thresh']):     
+            h['oilertime'] = h['oilertime'] + 1
         else:
           h['oiler-cmd'] = 0 
 except KeyboardInterrupt:

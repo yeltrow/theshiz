@@ -14,12 +14,10 @@ loadrt charge_pump
 loadrt fuji_frenic_vfd
 loadrt hwpanel
 # Add a comparator component for the oiler
-loadrt comp names=LubePumpComp
-loadrt timedelay names=LubePumpOffDelay
-
 
 # LOAD USERSPACE COMPONENTES
 loadusr -W mb2hal config=mb2hal.ini
+loadusr -W ./oilerctl
 
 # ADD FUNCTIONS TO BASE THREAD 
 addf parport.0.read base-thread
@@ -42,10 +40,6 @@ addf stepgen.update-freq servo-thread
 addf abs.0 servo-thread
 addf fuji-frenic-vfd.0 servo-thread
 addf hwpanel.0 servo-thread
-# Oiler
-addf LubePumpComp servo-thread
-addf LubePumpOffDelay servo-thread
-
 
 # CONNECTIONS TO NETS
 
@@ -63,17 +57,10 @@ net astep => parport.0.pin-08-out
 setp parport.0.pin-08-out-invert 1
 net adir => parport.0.pin-09-out
 
-# Oiler
-setp LubePumpComp.hyst 0.0
-setp LubePumpComp.in0 0.001
-# Comparator for oiler gets velocity and 0 as its inputs
+# Oiler - The rest is in the custom_postgui.hal because
+# we need time for the userspace components to load
+#
 net moving <= motion.current-vel
-net moving => LubePumpComp.in1
-
-loadrt not count=1
-setp LubePumpOffDelay.off-delay 60.0
-net tableMoving LubePumpComp.out => LubePumpOffDelay.in
-net pumpon LubePumpOffDelay.out => parport.0.pin-16-out
 
 net charge-pump => parport.0.pin-17-out
 # From estop circuit 5V = estop satisfied, relay closed, ready for motion
