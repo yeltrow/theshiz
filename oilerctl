@@ -1,0 +1,97 @@
+#!/usr/bin/env python
+#    Copyright 2017 By Matt Wortley matthew_r_wortley@[nospam]yahoo.com
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#    oilerctl is component written for linuxcnc to make it easier to connect
+#    an automatic oiler that needs its duty cycle managed by linuxcnc.  
+#    In particular case of interest, I have a "clock motor" driven oiler 
+#    powered by the mains through a relay.  It only needs to run about
+#    15 minutes per hour.  I also do not want it to operate for any less than
+#    one minute if it does get turned on to keep the relay from clattering
+#    unnecessarily.  The program write the current count of seconds to a
+#    file called oilerstatus.txt.  This makes is persistent between restarts.
+#    
+#    To use it for this example:
+#    in your .hal file:
+#    loadusr oilerctl 
+#    If the file is in the directory with your config files:
+#    loadusr ./oilerctl
+#    setp oilerctl.offseconds 2700
+#    setp oilerctl.onseconds 900
+#    setp oilerctl.debounceseconds 60
+#    setp oilerctl.velocity-thresh 0.0001
+#    net v-to-oiler motion.current-vel => oilerctl.velocity 
+#    net oiler-relay oilerctl.oiler-cmd => your_relay_pin_here
+#
+#
+#
+#
+import hal, time
+h = hal.component("oilerctl")
+h.newpin("velocity", hal.HAL_FLOAT, hal.HAL_IN)
+h.newparam("onseconds", hal.HAL_FLOAT, hal.HAL_RW)
+h.newparam("debounceseconds", hal.HAL_FLOAT, hal.HAL_RW)
+h.newparam("offseconds", hal.HAL_FLOAT, hal.HAL_RW)
+h.newpin("velocity-thresh", hal.HAL_FLOAT, hal.HAL_IN)
+h.newpin("oiler-cmd", hal.HAL_BIT, hal.HAL_OUT)
+h.newpin("oilertime", hal.HAL_FLOAT, hal.HAL_OUT)
+h.ready()
+firstrun=1;
+if (h['onseconds']==0):
+  h['onseconds']=3600
+  h['offseconds']=3600
+  h['debounceseconds']=60
+oilerDebounce = 0
+try:
+    while 1:
+        time.sleep(1)
+        if(firstrun):
+          try:
+	    f = open('oilerstate.txt', 'r')
+            #print(f.read())
+            h['oilertime']=float(f.read())
+            f.close
+            firstrun=0
+          except:
+            h['oilertime']=0.0
+            firstrun=0
+        else: #duh        
+          try:
+            f = open('oilerstate.txt','w')
+            f.write(str(h['oilertime']))
+            f.close
+          except:  
+            print("Unable to write oilerstate.txt file:", sys.exc_info()[0])
+            raise
+        if(h['velocity'] > h['velocity-thresh']):     
+          h['oilertime'] = h['oilertime'] + 1
+          if(h['oilertime'] < (h['onseconds'])):
+	    oilerDebounce = h['debounceseconds']
+	  else: #bubba
+            if(h['oilertime'] >= (h['onseconds']+h['offseconds'])):
+              h['oilertime'] = 0
+        if(oilerDebounce > 0):
+          h['oiler-cmd'] = 1
+          oilerDebounce = oilerDebounce - 1
+          # If we are in the hold period and not moving, still accumulate
+          # time because we are oiling.
+          if(h['velocity'] <= h['velocity-thresh']):     
+            h['oilertime'] = h['oilertime'] + 1
+        else:
+          h['oiler-cmd'] = 0 
+except KeyboardInterrupt:
+    raise SystemExit
+

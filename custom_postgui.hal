@@ -21,6 +21,11 @@ net hwstep hwpanel.0.STEP => halui.program.step
 net hwrun hwpanel.0.PAUSE => halui.program.resume
 net hwstop hwpanel.0.STOP => halui.program.stop
 
+net moving => oilerctl.velocity
+setp oilerctl.offseconds 2700
+setp oilerctl.onseconds 900
+setp oilerctl.debounceseconds 60
+net pumpon oilerctl.oiler-cmd => parport.0.pin-16-out
 
 #define STEP 27
 #define RUN 28
