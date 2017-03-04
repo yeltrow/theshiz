@@ -136,6 +136,11 @@ net mb2hwpanel5 mb2hal.RegIn.05.int => hwpanel.0.reg5
 net mb2hwpanel6 mb2hal.RegIn.06.int => hwpanel.0.reg6
 net mb2hwpanel7 mb2hal.RegIn.07.int => hwpanel.0.reg7
 
+# Feed override knob
+net focounts hwpanel.0.feedcounts halui.feed-override.counts
+setp halui.feed-override.scale .01
+setp halui.feed-override.count-enable 1
+
 # JOGWHEEL
 setp axis.0.jog-scale 0.00025
 setp axis.0.jog-vel-mode 1
