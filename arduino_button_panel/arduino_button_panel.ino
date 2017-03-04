@@ -81,9 +81,9 @@ void setup() {
 
  
 void loop() {
-    static long spindleoverride=(1<<30);
-    static long feedoverride=(1<<30);
-    static long jog=(1<<30);
+    static long spindleoverride=(1L<<30);
+    static long feedoverride=(1L<<30);
+    static long jog=(1L<<30);
     static long i;
     i++;
     static long pos;
@@ -110,17 +110,18 @@ void loop() {
     // Heartbeat occupies the bottom 1 bit
     tab_reg[0]=(tab_reg[0]<<1)+((i>>6) & 0x0001);
     // Heartbeat gets the whole next register for now...
-    tab_reg[1] = ((i>>6) & 0x0007);
+    //tab_reg[1] = ((i>>6) & 0x0007);
+    tab_reg[1] = i;
     spindleoverride=spindleoverride+spindle_enc.readEncoder();
     // Map bottom 16 bits of encoder in
-    tab_reg[2] = 0x00FF & spindleoverride;
+    tab_reg[2] = 0xFFFFL & spindleoverride;
     // Map top 16 bits of encoder in
     tab_reg[3] = spindleoverride>>16;
     feedoverride=feedoverride+feed_enc.readEncoder();
-    tab_reg[4] = 0x00FF & feedoverride;
+    tab_reg[4] = 0xFFFFL & feedoverride;
     tab_reg[5] = feedoverride>>16;
     jog=jog+jog_enc.readEncoder();
-    tab_reg[6] = 0x00FF & jog;
+    tab_reg[6] = 0xFFFFL & jog;
     tab_reg[7] = jog>>16;
     
 }

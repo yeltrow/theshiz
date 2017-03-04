@@ -128,6 +128,20 @@ net variator-setting => fuji-frenic-vfd.0.nominalRPM
 
 # HARDWARE BUTTON PANEL
 net mb2hwpanel0 mb2hal.RegIn.00.int => hwpanel.0.reg0
+net mb2hwpanel1 mb2hal.RegIn.01.int => hwpanel.0.reg1
+net mb2hwpanel2 mb2hal.RegIn.02.int => hwpanel.0.reg2
+net mb2hwpanel3 mb2hal.RegIn.03.int => hwpanel.0.reg3
+net mb2hwpanel4 mb2hal.RegIn.04.int => hwpanel.0.reg4
+net mb2hwpanel5 mb2hal.RegIn.05.int => hwpanel.0.reg5
+net mb2hwpanel6 mb2hal.RegIn.06.int => hwpanel.0.reg6
+net mb2hwpanel7 mb2hal.RegIn.07.int => hwpanel.0.reg7
+
+# JOGWHEEL
+setp axis.0.jog-scale 0.00025
+setp axis.0.jog-vel-mode 1
+net jogwheel hwpanel.0.jogcounts axis.0.jog-counts
+# UNCOMMENT THE BELOW THE ENABLE X-JOGWHEEL
+setp axis.0.jog-enable 1 
 
 # This machine just needs to know the computer is alive so as soon as 
 # EMC is running, we enable the hardware estop system to perform its
