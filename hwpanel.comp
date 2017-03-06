@@ -8,14 +8,15 @@ author "Matt Wortley";
 license "GPLv2 or later";
 description """This component converts responses and commands for an arduino button panel sitting on modbus """;
 
-pin in signed reg0 "float byte 0 returned by modbus";
-pin in signed reg1 "float byte 1 returned by modbus";
-pin in signed reg2 "float byte 2 returned by modbus";
-pin in signed reg3 "float byte 3 returned by modbus";
-pin in signed reg4 "float byte 4 returned by modbus";
-pin in signed reg5 "float byte 5 returned by modbus";
-pin in signed reg6 "float byte 6 returned by modbus";
-pin in signed reg7 "float byte 6 returned by modbus";
+pin in signed reg0 "byte 0 returned by modbus";
+pin in signed reg1 "byte 1 returned by modbus";
+pin in signed reg2 "byte 2 returned by modbus";
+pin in signed reg3 "byte 3 returned by modbus";
+pin in signed reg4 "byte 4 returned by modbus";
+pin in signed reg5 "byte 5 returned by modbus";
+pin in signed reg6 "byte 6 returned by modbus";
+pin in signed reg7 "byte 7 returned by modbus";
+pin out float reg8 "signed byte 8 sent to modbus";
 
 pin out bit FEEDHOLD "0 if latching button is pressed";
 pin out bit PAUSE "0 if pressed";
@@ -90,6 +91,9 @@ FUNCTION(_) {
   temp=(reg7 << 16) + reg6;
   jogcounts=temp;
 
+  // Pack the outgoing bits into a 16 bit int
+  // we perform the inversion when we retrieved it 
+  reg8 = (float)(HEARTBEAT);
 
 /* The below is just an example of how to add function into a component.
 ** It doesn't do anything.

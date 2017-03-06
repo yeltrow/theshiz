@@ -85,12 +85,17 @@ void loop() {
     static long feedoverride=(1L<<30);
     static long jog=(1L<<30);
     static long i;
+    int linuxcnchb = 0;
     i++;
     static long pos;
         /* Launch Modbus slave loop with:
        - pointer to the mapping
        - max values of mapping */
     modbusino_slave.loop(tab_reg, 10);
+
+    // process any messages from modbus 
+    linuxcnchb = (tab_reg[8] & 0x0001);
+    
     // Pack in all of the single bit values
     tab_reg[0] = digitalRead(FEEDHOLD);
     tab_reg[0]=(tab_reg[0]<<1)+digitalRead(PAUSE);
@@ -107,8 +112,11 @@ void loop() {
     tab_reg[0]=(tab_reg[0]<<1)+digitalRead(COOLANTOFF);
     tab_reg[0]=(tab_reg[0]<<1)+digitalRead(SPINDLEON);
     tab_reg[0]=(tab_reg[0]<<1)+digitalRead(SPINDLEOFF);
-    // Heartbeat occupies the bottom 1 bit
-    tab_reg[0]=(tab_reg[0]<<1)+((i>>6) & 0x0001);
+    // Heartbeat occupies the bottom 1 bit - It is the same as the value
+    // passed to us.  Linuxcnc is responsible for inverting and sending
+    // it again.  This is to eliminate aliasing effects caused by having
+    // a free runnig asynchromous timier in our logic.
+    tab_reg[0]=(tab_reg[0]<<1)+linuxcnchb;
     // Heartbeat gets the whole next register for now...
     //tab_reg[1] = ((i>>6) & 0x0007);
     tab_reg[1] = i;

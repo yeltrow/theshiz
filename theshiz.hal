@@ -13,6 +13,10 @@ loadrt abs count=1
 loadrt charge_pump
 loadrt fuji_frenic_vfd
 loadrt hwpanel
+loadrt watchdog num_inputs=1
+loadrt not names=not-estop,not-watchdogok
+loadrt message names=msgwatchdog messages="Button_Control_Panel_Watchdog_Timout "
+
 # Add a comparator component for the oiler
 
 # LOAD USERSPACE COMPONENTES
@@ -40,6 +44,12 @@ addf stepgen.update-freq servo-thread
 addf abs.0 servo-thread
 addf fuji-frenic-vfd.0 servo-thread
 addf hwpanel.0 servo-thread
+addf watchdog.set-timeouts servo-thread
+addf watchdog.process servo-thread
+addf not-estop servo-thread
+addf not-watchdogok servo-thread
+addf msgwatchdog servo-thread
+
 
 # CONNECTIONS TO NETS
 
@@ -71,7 +81,7 @@ net estopreset => fuji-frenic-vfd.0.resetCmd
 
 setp stepgen.0.position-scale [AXIS_0]SCALE
 setp stepgen.0.steplen 20000
-setp stepgen.0.stepspace 2000
+setp stepgen.0.stepspace 20000
 setp stepgen.0.dirhold 35000
 setp stepgen.0.dirsetup 35000
 setp stepgen.0.maxaccel [AXIS_0]STEPGEN_MAXACCEL
@@ -127,6 +137,7 @@ net spindle-rev motion.spindle-reverse => fuji-frenic-vfd.0.revCmd
 net variator-setting => fuji-frenic-vfd.0.nominalRPM
 
 # HARDWARE BUTTON PANEL
+
 net mb2hwpanel0 mb2hal.RegIn.00.int => hwpanel.0.reg0
 net mb2hwpanel1 mb2hal.RegIn.01.int => hwpanel.0.reg1
 net mb2hwpanel2 mb2hal.RegIn.02.int => hwpanel.0.reg2
@@ -148,7 +159,20 @@ net jogwheel hwpanel.0.jogcounts axis.0.jog-counts
 # UNCOMMENT THE BELOW THE ENABLE X-JOGWHEEL
 setp axis.0.jog-enable 1 
 
+# HARDWARE BUTTON PANEL WATCHDOG
+setp msgwatchdog.edge 0
+setp watchdog.timeout-0 0.600
+
+net hwpanel-heartbeat hwpanel.0.HEARTBEAT watchdog.input-0
+net msg-hw-panel-wd watchdog.ok-out msgwatchdog.trigger
+net estopreset not-estop.in
+net estopreset-not not-estop.out watchdog.enable-in
+net mb2hwpanel8 hwpanel.0.reg8 => mb2hal.RegOut.00
+net msg-hw-panel-wd not-watchdogok.in
+net watchdogfault not-watchdogok.out => halui.machine.off
+
 # This machine just needs to know the computer is alive so as soon as 
+
 # EMC is running, we enable the hardware estop system to perform its
 # work.  Estop reset is performed via the soft button on the user interface
 # feedback to lcnc is performed via a hardware pin from the relay.
