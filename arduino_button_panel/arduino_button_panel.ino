@@ -1,4 +1,7 @@
-#include <RotaryEncoder.h>
+#include <yeltrowEncoder.h>
+
+
+//#include <RotaryEncoder.h>
 
 #include <Modbusino.h>
 
