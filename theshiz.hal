@@ -60,9 +60,11 @@ setp parport.0.pin-03-out-invert 1
 net ystep => parport.0.pin-04-out
 setp parport.0.pin-04-out-invert 1
 net ydir => parport.0.pin-05-out
+setp parport.0.pin-05-out-invert 1
 net zstep => parport.0.pin-06-out
 setp parport.0.pin-06-out-invert 1
 net zdir => parport.0.pin-07-out
+#setp parport.0.pin-07-out-invert 1
 net astep => parport.0.pin-08-out
 setp parport.0.pin-08-out-invert 1
 net adir => parport.0.pin-09-out
@@ -74,7 +76,6 @@ net moving <= motion.current-vel
 
 net charge-pump => parport.0.pin-17-out
 # From estop circuit 5V = estop satisfied, relay closed, ready for motion
-net estop-out => parport.0.pin-01-out
 net estop-relay-closed <= parport.0.pin-15-in
 net estopreset => parport.0.pin-14-out
 net estopreset => fuji-frenic-vfd.0.resetCmd
@@ -153,11 +154,7 @@ setp halui.feed-override.scale .01
 setp halui.feed-override.count-enable 1
 
 # JOGWHEEL
-setp axis.0.jog-scale 0.00025
-setp axis.0.jog-vel-mode 1
-net jogwheel hwpanel.0.jogcounts axis.0.jog-counts
-# UNCOMMENT THE BELOW THE ENABLE X-JOGWHEEL
-setp axis.0.jog-enable 1 
+source jogwheel.hal
 
 # HARDWARE BUTTON PANEL WATCHDOG
 setp msgwatchdog.edge 0
@@ -171,20 +168,16 @@ net mb2hwpanel8 hwpanel.0.reg8 => mb2hal.RegOut.00
 net msg-hw-panel-wd not-watchdogok.in
 net watchdogfault not-watchdogok.out => halui.machine.off
 
-# This machine just needs to know the computer is alive so as soon as 
-
-# EMC is running, we enable the hardware estop system to perform its
+# EMC is running and is not estopped, we enable the hardware estop system to perform its
 # work.  Estop reset is performed via the soft button on the user interface
-# feedback to lcnc is performed via a hardware pin from the relay.
-setp charge-pump.enable 1  
-# net estop-out charge-pump.enable iocontrol.0.user-enable-out
+# Feedback to lcnc is performed via a hardware pin from the relay.
+net estop-out charge-pump.enable iocontrol.0.user-enable-out
 net charge-pump <= charge-pump.out
 # We want to request a reset relay pulse from the HMI to the estop hardare
 # it will only "stick" if the estop relay pulls in and stays.
 # iocontrol.0.user-request-enable: (Bit, Out) TRUE when the user has requested that estop be cleared
-net estop-out <=  iocontrol.0.user-request-enable 
-#net estopreset <= pyvcp.estopreset
-# Orignally net estop-out <= iocontrol.0.user-enable-out
+# 100ms long pulse is created by linuxcnc.
+net estopreset <=  iocontrol.0.user-request-enable 
 # iocontrol.0.emc-enable-in: Should be driven FALSE when an external estop condition exists.
 net estop-relay-closed => iocontrol.0.emc-enable-in
 

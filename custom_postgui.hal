@@ -13,7 +13,6 @@ net absolute-spindle-vel <= abs.0.out => pyvcp.spindle-speed
 net spindle-at-speed => pyvcp.spindle-at-speed-led
 net spindle-cmd <= pyvcp.spindle-setting-f
 sets spindle-at-speed true
-net estopreset <= pyvcp.estopreset
 net variator-setting <= pyvcp.variator-setting-f
 
 net hwpause hwpanel.0.FEEDHOLD => halui.program.pause

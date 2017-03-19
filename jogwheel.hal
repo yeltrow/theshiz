@@ -1,0 +1,38 @@
+#Make sure the jogwheel counts are sent to all axes
+#BEFORE any of them get enabled or the table will go 
+#sailing off into infinity.
+net jogwheel hwpanel.0.jogcounts 
+net jogwheel axis.0.jog-counts
+net jogwheel axis.1.jog-counts
+net jogwheel axis.2.jog-counts
+net jogwheel axis.3.jog-counts
+# Connect the physical buttons to the select-but signals
+net x-jog-select-but hwpanel.0.XBUT
+net y-jog-select-but hwpanel.0.YBUT
+net z-jog-select-but hwpanel.0.ZBUT
+net a-jog-select-but hwpanel.0.ABUT
+# Connect the select-but signals to their respective axes in halui
+net x-jog-select-but halui.joint.0.select
+net y-jog-select-but halui.joint.1.select
+net z-jog-select-but halui.joint.2.select
+net a-jog-select-but halui.joint.3.select
+# Assign a signal for the output from halui that will go to axis to do jogs
+net x-jog-select halui.joint.0.is-selected
+net y-jog-select halui.joint.1.is-selected
+net z-jog-select halui.joint.2.is-selected
+net a-jog-select halui.joint.3.is-selected
+# Connect each axis enable signal to the selector from halui
+net x-jog-select axis.0.jog-enable
+net y-jog-select axis.1.jog-enable
+net z-jog-select axis.2.jog-enable
+net a-jog-select axis.3.jog-enable
+net jog-scale axis.0.jog-scale
+net jog-scale axis.1.jog-scale
+net jog-scale axis.2.jog-scale
+net jog-scale axis.3.jog-scale
+sets jog-scale 0.00025
+setp axis.0.jog-vel-mode 1
+setp axis.1.jog-vel-mode 1
+setp axis.2.jog-vel-mode 1
+setp axis.3.jog-vel-mode 1
+sets jog-scale .0005
