@@ -60,9 +60,11 @@ setp parport.0.pin-03-out-invert 1
 net ystep => parport.0.pin-04-out
 setp parport.0.pin-04-out-invert 1
 net ydir => parport.0.pin-05-out
+setp parport.0.pin-05-out-invert 1
 net zstep => parport.0.pin-06-out
 setp parport.0.pin-06-out-invert 1
 net zdir => parport.0.pin-07-out
+#setp parport.0.pin-07-out-invert 1
 net astep => parport.0.pin-08-out
 setp parport.0.pin-08-out-invert 1
 net adir => parport.0.pin-09-out
@@ -152,11 +154,7 @@ setp halui.feed-override.scale .01
 setp halui.feed-override.count-enable 1
 
 # JOGWHEEL
-setp axis.0.jog-scale 0.00025
-setp axis.0.jog-vel-mode 1
-net jogwheel hwpanel.0.jogcounts axis.0.jog-counts
-# UNCOMMENT THE BELOW THE ENABLE X-JOGWHEEL
-setp axis.0.jog-enable 1 
+source jogwheel.hal
 
 # HARDWARE BUTTON PANEL WATCHDOG
 setp msgwatchdog.edge 0
