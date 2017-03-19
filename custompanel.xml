@@ -47,11 +47,5 @@
 		    <min_>75</min_>
 		    <max_>3800</max_>
 		</scale>
-                <button>
-			<font>("Helvetica",20)</font>
-			<width>3</width>
-			<halpin>"estopreset"</halpin>
-			<text>"ESTOP RESET"</text>
-		</button>
         </vbox>
 </pyvcp>
