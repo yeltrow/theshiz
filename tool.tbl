@@ -4,3 +4,4 @@ T3 P3 Z1.273 D0.5 ;.5 end mill
 T99999 P99999 Z0.1 ;big tool number 
 T4 P4 Z0.607415 D0.365 ;.365 mill 
 T6 P6 Z1.5 D0.25 ;0.25x0.75 center drill 
+T7 P7 Z3.559 D.617 ;5/8 end mill 2 flute 0.617 

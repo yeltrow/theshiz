@@ -20,12 +20,18 @@
                             <text>"             "</text>
                             <font>("Helvetica",20)</font>
                     </label>
-                    <led>
-                        <halpin>"spindle-at-speed-led"</halpin> 
-                        <size>30</size> 
-                        <on_color>"green"</on_color>
-                        <off_color>"red"</off_color>
-                    </led>
+                </hbox>
+                <hbox>
+                <label>
+                    <text>"Control Panel Heartbeat:"</text>
+                    <font>("Helvetica",12)</font>
+                </label>
+                <led>
+                    <halpin>"heartbeat-indicator-led"</halpin> 
+                    <size>30</size> 
+                    <on_color>"green"</on_color>
+                    <off_color>"red"</off_color>
+                </led>
                 </hbox>
                 <scale>
 		    <font>("Helvetica",16)</font>
