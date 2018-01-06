@@ -54,4 +54,8 @@
 		    <max_>3800</max_>
 		</scale>
         </vbox>
+	<vbox>
+	   
+        </vbox>
+        
 </pyvcp>

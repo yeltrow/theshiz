@@ -1,6 +1,7 @@
 #Make sure the jogwheel counts are sent to all axes
 #BEFORE any of them get enabled or the table will go 
 #sailing off into infinity.
+loadrt logic personality=0x204
 net jogwheel hwpanel.0.jogcounts 
 net jogwheel axis.0.jog-counts
 net jogwheel axis.1.jog-counts
@@ -11,6 +12,13 @@ net x-jog-select-but hwpanel.0.XBUT
 net y-jog-select-but hwpanel.0.YBUT
 net z-jog-select-but hwpanel.0.ZBUT
 net a-jog-select-but hwpanel.0.ABUT
+# OR all of the buttons together so they switch the mill to manual mode
+#logic.
+net x-jog-select-but logic.0.in-00
+net y-jog-select-but logic.0.in-01
+net z-jog-select-but logic.0.in-02
+net a-jog-select-but logic.0.in-03
+net manual-requested logic.0.or halui.mode.manual
 # Connect the select-but signals to their respective axes in halui
 net x-jog-select-but halui.joint.0.select
 net y-jog-select-but halui.joint.1.select
@@ -36,3 +44,5 @@ setp axis.1.jog-vel-mode 1
 setp axis.2.jog-vel-mode 1
 setp axis.3.jog-vel-mode 1
 sets jog-scale .0005
+# add thread to servo thread 
+addf logic.0 servo-thread

@@ -1,22 +1,46 @@
-<xml>
-	
-	<group name=_("Parameters")_ icon="od.png">
-		<sub name=_("Cutting Params")_ tool_tip= _("Set cutting parameters")_ icon="threading-params.png" src="lathe/cutting-params.cfg"/>
-        <sub name=_("Threading Params")_ tool_tip= _("Set thread cutting params")_ icon="threading-params.png" src="lathe/threading-params.cfg"/>
-	</group>
-    <group name=_("Tool")_ icon="lathe-tool.png">
-        <sub name=_("Change Tool")_ tool_tip= _("Change cutter")_ icon="lathe-tool-change.png" src="lathe/tool-change.cfg"/>
-    </group>
-	<group name=_("Cutting")_ icon="threading.png">
-		<sub name=_("Threads")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/thread-adv.cfg"/>
-        <sub name=_("Face")_ tool_tip= _("Cut face")_ icon="lathe-facing.png" src="lathe/face.cfg"/>
-	</group>
-    <group name=_('Miscellaneous')_ icon='misc.png'>
-        <sub name=_('Insert a G Code File')_ tool_tip= _('Include a custom gcode file')_ icon="file-gcode.png" src="i_gcode.cfg"/>
-        <sub name=_('Custom G Code')_ tool_tip= _('Write custom gcode')_ icon="gcode.png" src="gcode.cfg"/>
-        <sub name=_('Change Units')_ tool_tip= _('Change from inch to metric or inverse')_ icon="mm2in.png" src="change-units.cfg"/>
-    </group>
+<ncam_ui>
+	<menu>
+		<menu action='tools'  name=_("Tool")_ icon="lathe-tool.png">
+			<menuitem action='ch_tool'  name=_("Change Cutter")_ tool_tip= _("Change cutter")_ icon="lathe-tool-change.png" src="lathe/tool-change.cfg"/>
+		</menu>
+		<menu action='cutting'  name=_("Cutting")_ icon="threading.png">
+			<menuitem action='boring'  name=_("Boring")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/boring.cfg"/>
+			<menuitem action='turning'  name=_("Turning")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/turning.cfg"/>
+			<menuitem action='parting'  name=_("Parting")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/parting.cfg"/>
+			<menuitem action='radius_od'  name=_("Radius OD")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/radius_od.cfg"/>
+			<menuitem action='radius'  name=_("Radius")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/radius.cfg"/>
+			<menuitem action='taper_ida'  name=_("Taper IDA")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/taper_ida.cfg"/>
+			<menuitem action='taper_idl'  name=_("Taper IDL")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/taper_idl.cfg"/>
+			<menuitem action='taper_idla'  name=_("Taper IDLA")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/taper_idla.cfg"/>
+			<menuitem action='taper_oda'  name=_("Taper ODA")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/taper_oda.cfg"/>
+			<menuitem action='taper_odl'  name=_("Taper ODL")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/taper_odl.cfg"/>
+			<menuitem action='taper_odla'  name=_("Taper ODLA")_ tool_tip= _("Cut regular threads")_ icon="threading.png" src="lathe/taper_odla.cfg"/>
+			<menuitem action='facing'  name=_("Facing")_ tool_tip= _("Cut face")_ icon="lathe-facing.png" src="lathe/facing.cfg"/>
+			<menuitem action='threading'  name=_("Threading")_ tool_tip= _("Cut face")_ icon="lathe-facing.png" src="lathe/threading.cfg"/>
+		</menu>
+		<menu action='misc'  name=_('Miscellaneous')_ icon='misc.png'>
+			<menuitem action='group_std' name=_('Standard Group')_ tool_tip=_('Group subroutines')_ icon="group.png" src="group.cfg"/>
+			<menuitem action='gcode_file'  name=_('Insert a G Code File')_ tool_tip= _('Include a custom gcode file')_ icon="file-gcode.png" src="i_gcode.cfg"/>
+			<menuitem action='gcode'  name=_('Custom G Code')_ tool_tip= _('Write custom gcode')_ icon="gcode.png" src="gcode.cfg"/>
+			<menuitem action='stock' name=_('Material')_ tool_tip=_('Group subroutines')_ icon="group.png" src="lathe/material.cfg"/>
+            <menuitem action='prjdesc' name=_('Project Notes')_ tool_tip=_('View project name and note')_ icon="prj-desc.png" src="proj_desc.cfg"/>
+		</menu>
+	</menu>
 
-</xml>
-
-<!-- Do not forget to close <sub /> tags! -->	
+    <toolbar>
+        <toolitem action='ch_tool' />
+        <separator/>
+        <toolitem action='facing' />
+        <toolitem action='turning' />
+        <toolitem action='boring' />
+        <toolitem action='taper_ida' />
+        <toolitem action='taper_oda' />
+        <separator/>
+        <toolitem action='group_std' />
+        <separator/>
+        <toolitem action='threading' />
+        <separator/>
+        <toolitem action='gcode' />
+        <toolitem action='gcode_file' />
+    </toolbar >
+</ncam_ui>
