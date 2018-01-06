@@ -1,8 +1,0 @@
-T1 P1 Z0 D0.123 ;1/8 end mill 
-T2 P2 Z0.1 D0.0625 ;1/16 end mill 
-T3 P3 Z1.273 D0.5 ;.5 end mill 
-T99999 P99999 Z0.1 ;big tool number 
-T4 P4 Z0.607415 D0.365 ;.365 mill 
-T6 P6 Z1.5 D0.25 ;0.25x0.75 center drill 
-T7 P7 Z-3.559 D0.617 ;5/8 end mill 2 flute 0.617 
-T20 P20 Z3 D0.5 ;countersink 0.5in 90deg 
