@@ -44,6 +44,8 @@
 #define SPINDLEON 51
 #define SPINDLEOFF 50
 
+#define DECIMAL_BITSHIFT 5
+#define SUMMER_BITSHIFT 7
 
 /* Initialize the slave with the ID 1 */
 ModbusinoSlave modbusino_slave(1);
@@ -89,6 +91,8 @@ void loop() {
     static long jog=(1L<<30);
     static long i;
     int linuxcnchb = 0;
+    static long maxVelSum = 0;
+    
     i++;
     static long pos;
         /* Launch Modbus slave loop with:
@@ -134,5 +138,13 @@ void loop() {
     jog=jog+jog_enc.readEncoder();
     tab_reg[6] = 0xFFFFL & jog;
     tab_reg[7] = jog>>16;
-    
+    //   Use a moving average filter on the data
+    //   Bitshifts are used instead of divides because they are faster
+    //   If we have N samples in the average, we subtract 1/N * the sum like we
+    //   are getting rid of a single sample.  
+    maxVelSum = maxVelSum - ( maxVelSum >> SUMMER_BITSHIFT);
+    // We multiply the analog value by a fixed power of two to increase the resolution
+    // of the running average, like fixed decimal but with binary.
+    maxVelSum = maxVelSum + ((long)analogRead(A15) << DECIMAL_BITSHIFT);
+    tab_reg[8] = (maxVelSum >> (SUMMER_BITSHIFT));
 }
