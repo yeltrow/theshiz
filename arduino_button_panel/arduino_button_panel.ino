@@ -15,6 +15,13 @@
  * License ISC, see LICENSE for more details.
  */
 
+/* Adapted by Matt Wortley for a custom arduino based hardwarepanel for
+ * a Shizuoka AN-S Milling machine.  
+ * 
+ * Inputs conntected to buttons and knobs are in words 0-9
+ * Outputs connection to lights and stuff are in words 10 and up
+ */
+
 #include <HardwareSerial.h>
 #include <Modbusino.h>
 
@@ -101,7 +108,7 @@ void loop() {
     modbusino_slave.loop(tab_reg, 10);
 
     // process any messages from modbus 
-    linuxcnchb = (tab_reg[8] & 0x0001);
+    linuxcnchb = (tab_reg[9] & 0x0001);
     
     // Pack in all of the single bit values
     tab_reg[0] = digitalRead(FEEDHOLD);
@@ -126,7 +133,7 @@ void loop() {
     tab_reg[0]=(tab_reg[0]<<1)+linuxcnchb;
     // Heartbeat gets the whole next register for now...
     //tab_reg[1] = ((i>>6) & 0x0007);
-    tab_reg[1] = i;
+    tab_reg[1] = tab_reg[9];
     spindleoverride=spindleoverride+spindle_enc.readEncoder();
     // Map bottom 16 bits of encoder in
     tab_reg[2] = 0xFFFFL & spindleoverride;
@@ -147,4 +154,5 @@ void loop() {
     // of the running average, like fixed decimal but with binary.
     maxVelSum = maxVelSum + ((long)analogRead(A15) << DECIMAL_BITSHIFT);
     tab_reg[8] = (maxVelSum >> (SUMMER_BITSHIFT));
+    
 }

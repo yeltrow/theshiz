@@ -16,7 +16,9 @@ pin in signed reg4 "byte 4 returned by modbus";
 pin in signed reg5 "byte 5 returned by modbus";
 pin in signed reg6 "byte 6 returned by modbus";
 pin in signed reg7 "byte 7 returned by modbus";
-pin out float reg8 "signed byte 8 sent to modbus";
+pin in signed reg8 "byte 8 returned by modbus";
+/* OUTPUTS */
+pin out float reg9 "signed word 9 sent to modbus";
 
 pin out bit FEEDHOLD "0 if latching button is pressed";
 pin out bit PAUSE "0 if pressed";
@@ -30,6 +32,7 @@ pin out bit ABUT "0 if pressed";
 pin out bit KNEEBUT "0 if pressed";
 pin out bit NONEBUT "0 if pressed";
 pin out bit COOLANTON "0 if pressed";
+
 pin out bit COOLANTOFF "0 if pressed";
 pin out bit SPINDLEON "0 if pressed";
 pin out bit SPINDLEOFF "0 if pressed";
@@ -93,7 +96,7 @@ FUNCTION(_) {
 
   // Pack the outgoing bits into a 16 bit int
   // we perform the inversion when we retrieved it 
-  reg8 = (float)(HEARTBEAT);
+  reg9 = (float)(HEARTBEAT);
 
 /* The below is just an example of how to add function into a component.
 ** It doesn't do anything.

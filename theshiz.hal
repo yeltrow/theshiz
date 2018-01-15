@@ -167,7 +167,7 @@ net hwpanel-heartbeat hwpanel.0.HEARTBEAT watchdog.input-0
 net msg-hw-panel-wd watchdog.ok-out msgwatchdog.trigger
 net estopreset not-estop.in
 net estopreset-not not-estop.out watchdog.enable-in
-net mb2hwpanel8 hwpanel.0.reg8 => mb2hal.RegOut.00
+net mb2hwpanel9 hwpanel.0.reg9 => mb2hal.RegOut.00
 net msg-hw-panel-wd not-watchdogok.in
 net watchdogfault not-watchdogok.out => halui.machine.off
 # button NONE has been repurposed to do a rapid to the tool change Z0 position
