@@ -15,6 +15,7 @@ loadrt fuji_frenic_vfd
 loadrt hwpanel
 loadrt watchdog num_inputs=1
 loadrt not names=not-estop,not-watchdogok
+loadrt debounce cfg=1
 loadrt message names=msgwatchdog messages="Button_Control_Panel_Watchdog_Timout "
 
 # Add a comparator component for the oiler
@@ -27,6 +28,7 @@ loadusr -W ./oilerctl
 addf parport.0.read base-thread
 #Commented out below because we are running one port now
 #addf parport.1.read base-thread 
+addf debounce.0 base-thread
 addf stepgen.make-pulses base-thread
 addf charge-pump base-thread
 addf parport.0.write base-thread
@@ -76,7 +78,10 @@ net moving <= motion.current-vel
 
 net charge-pump => parport.0.pin-17-out
 # From estop circuit 5V = estop satisfied, relay closed, ready for motion
-net estop-relay-closed <= parport.0.pin-15-in
+setp debounce.0.delay 5
+net estop-relay-closed <= debounce.0.0.out
+net estop-relay-closed-raw <= parport.0.pin-15-in
+net estop-relay-closed-raw => debounce.0.0.in
 net estopreset => parport.0.pin-14-out
 net estopreset => fuji-frenic-vfd.0.resetCmd
 
