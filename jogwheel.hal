@@ -2,6 +2,7 @@
 #BEFORE any of them get enabled or the table will go 
 #sailing off into infinity.
 loadrt logic personality=0x204
+loadrt mux2
 net jogwheel hwpanel.0.jogcounts 
 net jogwheel axis.0.jog-counts
 net jogwheel axis.1.jog-counts
@@ -38,11 +39,17 @@ net jog-scale axis.0.jog-scale
 net jog-scale axis.1.jog-scale
 net jog-scale axis.2.jog-scale
 net jog-scale axis.3.jog-scale
-sets jog-scale 0.00025
+# add the mux so that the stop button will cause the jog wheel to move the axis at
+# a fraction of the normal move amount for creeping in while touching off
+# while one is holding the stop button down.
+setp mux2.0.in0 0.0005
+setp mux2.0.in1 0.00005
+net jog-scale mux2.0.out 
+net hwstop mux2.0.sel
 setp axis.0.jog-vel-mode 1
 setp axis.1.jog-vel-mode 1
 setp axis.2.jog-vel-mode 1
 setp axis.3.jog-vel-mode 1
-sets jog-scale .0005
 # add thread to servo thread 
 addf logic.0 servo-thread
+addf mux2.0 servo-thread
