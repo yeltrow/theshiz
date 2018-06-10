@@ -45,7 +45,7 @@ net jog-scale axis.3.jog-scale
 setp mux2.0.in0 0.0005
 setp mux2.0.in1 0.00005
 net jog-scale mux2.0.out 
-net hwstop mux2.0.sel
+net manual-requested  mux2.0.sel
 setp axis.0.jog-vel-mode 1
 setp axis.1.jog-vel-mode 1
 setp axis.2.jog-vel-mode 1
