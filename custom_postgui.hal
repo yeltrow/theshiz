@@ -48,3 +48,9 @@ net pumpon oilerctl.oiler-cmd => parport.0.pin-16-out
 #define COOLANTOFF 48
 #define SPINDLEON 51
 #define SPINDLEOFF 50
+
+# PYVCP Manual Tool Changer Connections
+net now-tool pyvcp.tool-now
+net next-tool pyvcp.tool-number
+net tool-change-button pyvcp.force-tool-change
+
