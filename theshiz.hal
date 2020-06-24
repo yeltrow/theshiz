@@ -15,8 +15,10 @@ loadrt fuji_frenic_vfd
 loadrt hwpanel
 loadrt watchdog num_inputs=1
 loadrt not names=not-estop,not-watchdogok
+loadrt knob2float
 loadrt debounce cfg=1
 loadrt message names=msgwatchdog messages="Button_Control_Panel_Watchdog_Timout "
+loadrt mux4 names=mux4-spindle-cmd
 
 # Add a comparator component for the oiler
 
@@ -51,7 +53,7 @@ addf watchdog.process servo-thread
 addf not-estop servo-thread
 addf not-watchdogok servo-thread
 addf msgwatchdog servo-thread
-
+addf mux4-spindle-cmd servo-thread
 
 # CONNECTIONS TO NETS
 
@@ -134,6 +136,13 @@ net adir <= stepgen.3.dir
 net aenable axis.3.amp-enable-out => stepgen.3.enable
 
 # SPINDLE
+
+setp halui.spindle-override.scale 0.005
+net program-spindle-cmd <= motion.spindle-speed-out-abs
+net program-spindle-cmd mux4-spindle-cmd.in0
+net vcp-spindle-cmd mux4-spindle-cmd.in1
+net spindle-cmd mux4-spindle-cmd.out
+
 net spindle-at-speed => motion.spindle-at-speed
 net spindle-cmd => fuji-frenic-vfd.0.desiredRPM
 net spindle-mbcmd fuji-frenic-vfd.0.speedReg => mb2hal.node1.vfd.speedCmd.00
@@ -158,10 +167,24 @@ net run-button <= hwpanel.0.RUN
 net run-button => halui.program.run
 net run-button => halui.mode.auto 
 
+# HARDWARE PANEL SPINDLE SWITCH
+net spindle-on-sw <= hwpanel.0.SPINDLEON
+net spindle-off-sw <= hwpanel.0.SPINDLEOFF
+net spindle-on-sw => mux4-spindle-cmd.sel0
+net spindle-off-sw => mux4-spindle-cmd.sel1
+
+net spindle-on-sw => halui.spindle.start
+net spindle-off-sw => halui.spindle.stop
+
 # Feed override knob
 net focounts hwpanel.0.feedcounts halui.feed-override.counts
 setp halui.feed-override.scale .01
 setp halui.feed-override.count-enable 1
+
+# Spindle Override Knob
+
+net spindle-knob-counts <= hwpanel.0.spindlecounts
+net spindle-knob-counts => halui.spindle-override.counts
 
 # JOGWHEEL
 source jogwheel.hal

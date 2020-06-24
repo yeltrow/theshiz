@@ -10,7 +10,7 @@ net absolute-spindle-vel <= abs.0.out => pyvcp.spindle-speed
 
 # **** force spindle at speed indicator true because we have no feedback ****
 
-net spindle-cmd <= pyvcp.spindle-setting-f
+net vcp-spindle-cmd <= pyvcp.spindle-setting-f
 sets spindle-at-speed true
 net variator-setting <= pyvcp.variator-setting-f
 
@@ -24,7 +24,7 @@ net hwpanel-heartbeat pyvcp.heartbeat-indicator-led
 
 net moving => oilerctl.velocity
 setp oilerctl.offseconds 1350
-setp oilerctl.onseconds 450
+setp oilerctl.onseconds 1350
 setp oilerctl.debounceseconds 60
 net pumpon oilerctl.oiler-cmd => parport.0.pin-16-out
 
