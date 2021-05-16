@@ -73,6 +73,16 @@ net astep => parport.0.pin-08-out
 setp parport.0.pin-08-out-invert 1
 net adir => parport.0.pin-09-out
 
+# HOMING SWITCHES
+
+net x-home-sw axis.0.home-sw-in
+net x-home-sw parport.0.pin-11-in
+net y-home-sw axis.1.home-sw-in
+net y-home-sw parport.0.pin-12-in
+net z-home-sw axis.2.home-sw-in
+net z-home-sw parport.0.pin-13-in
+
+
 # Oiler - The rest is in the custom_postgui.hal because
 # we need time for the userspace components to load
 #
@@ -150,6 +160,9 @@ net vfdOperCmd <= fuji-frenic-vfd.0.operReg => mb2hal.node1.vfdOperCmd.00
 net spindle-fwd motion.spindle-forward => fuji-frenic-vfd.0.fwdCmd
 net spindle-rev motion.spindle-reverse => fuji-frenic-vfd.0.revCmd
 net variator-setting => fuji-frenic-vfd.0.nominalRPM
+
+net hal2vfdstatus mb2hal.node1.vfdOperStatus.00.int 
+net hal2vfdstatus fuji-frenic-vfd.0.vfdOperStateReg
 
 # HARDWARE BUTTON PANEL
 
