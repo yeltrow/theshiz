@@ -82,6 +82,56 @@
                         <width>2</width>
                 </spinbox>
         </hbox>
+        <hbox>
+                <label>
+                        <text>"X Ring Reading"</text>
+                        <font>("Helvetica",14)</font>
+                </label>
+                <spinbox>
+                        <halpin>"x-ring-reading"</halpin>
+                        <min_>-0.2</min_>
+                        <max_>0.2</max_>
+                        <initval>0</initval>
+                        <increment>0.00025</increment>
+                        <format>"2.5f"</format>
+                        <justify>CENTER</justify>
+                        <font>("Helvetica",14)</font>
+                       <width>8</width>
+               </spinbox>
+        </hbox>
+        <hbox>
+                <label>
+                        <text>"Y Ring Reading"</text>
+                        <font>("Helvetica",14)</font>
+                </label>
+                <spinbox>
+                        <halpin>"y-ring-reading"</halpin>
+                        <min_>-0.2</min_>
+                        <max_>0.2</max_>
+                        <initval>0</initval>
+                        <increment>0.00025</increment>
+                        <format>"2.5f"</format>
+                        <justify>CENTER</justify>
+                        <font>("Helvetica",14)</font>
+                       <width>8</width>
+               </spinbox>
+        </hbox>
+        <hbox>
+                <label>
+                        <text>"Z Ring Reading"</text>
+                        <font>("Helvetica",14)</font>
+                </label>
+                <spinbox>
+                        <halpin>"z-ring-reading"</halpin>
+                        <min_>-0.2</min_>
+                        <max_>0.2</max_>
+                        <initval>0</initval>
+                        <increment>0.00025</increment>
+                        <format>"2.5f"</format>
+                        <justify>CENTER</justify>
+                        <font>("Helvetica",14)</font>
+                       <width>8</width>
+               </spinbox>
+        </hbox>
 
-        
 </pyvcp>

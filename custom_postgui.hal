@@ -54,3 +54,7 @@ net now-tool pyvcp.tool-now
 net next-tool pyvcp.tool-number
 net tool-change-button pyvcp.force-tool-change
 
+# PYVCP Ring Reading Axis Offset
+net xpos-ring-reading pyvcp.x-ring-reading
+net ypos-ring-reading pyvcp.y-ring-reading
+net zpos-ring-reading pyvcp.z-ring-reading
