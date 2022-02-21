@@ -10,7 +10,7 @@ T22 P22 D3.000000 ;3in shell mill
 T7 P7 D0.875000 Z+0.999000 ;tap holder 
 T8 P8 D0.125000 Z-0.476598 ;0.125 60 degree chamfer bit 
 T9 P9 D0.375000 Z+2.734410 ;drill chuck 
-T12 P12 D0.500000 Z+0.019610 ;1/2 3 flute carbide 
+T12 P12 D0.500000 Z+0.040050 ;1/2 3 flute carbide 
 T23 P23 D0.312500 Z-0.507977 ;5/16 ball mill 
 T14 P14 D0.250000 Z-0.333643 ;0.25 flat end mill 
 T13 P13 D0.500000 ;.5 endmill 

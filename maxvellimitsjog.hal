@@ -1,0 +1,8 @@
+#Make sure the jogwheel counts are sent to all axes
+#BEFORE any of them get enabled or the table will go 
+#sailing off into infinity.
+loadrt conv_s32_float
+# maxVel is 
+net maxVel conv-s32-float.0.in
+ halui.jog-speed
+addf conv_s32_float.0 servo-thread
