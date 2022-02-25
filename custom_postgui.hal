@@ -26,7 +26,7 @@ net moving => oilerctl.velocity
 setp oilerctl.offseconds 1350
 setp oilerctl.onseconds 1350
 setp oilerctl.debounceseconds 60
-net pumpon oilerctl.oiler-cmd => parport.0.pin-16-out
+net pumpon oilerctl.oiler-cmd 
 
 #define STEP 27
 #define RUN 28

@@ -39,9 +39,11 @@ net jog-scale axis.0.jog-scale
 net jog-scale axis.1.jog-scale
 net jog-scale axis.2.jog-scale
 net jog-scale axis.3.jog-scale
-# add the mux so that the stop button will cause the jog wheel to move the axis at
+# add the mux so that the axis select button will cause the jog wheel to move the axis at
 # a fraction of the normal move amount for creeping in while touching off
-# while one is holding the stop button down.
+# while one is holding the axis select button down.  
+# This means holding X-select whilte turning the wheel goes slow.  
+# Not holding the button makes the jog increment fast again.
 setp mux2-jogwheel.in0 0.0005
 setp mux2-jogwheel.in1 0.00005
 net jog-scale mux2-jogwheel.out 
