@@ -21,7 +21,7 @@ loadrt mux4 names=mux4-spindle-cmd
 
 # LOAD USERSPACE COMPONENTES
 loadusr -W mb2hal config=mb2hal.ini
-loadusr -W ./oilerctl
+
 
 # ADD FUNCTIONS TO BASE THREAD 
 
@@ -65,11 +65,6 @@ net x-home-sw axis.0.home-sw-in
 net y-home-sw axis.1.home-sw-in
 
 net z-home-sw axis.2.home-sw-in
-
-# Oiler - The rest is in the custom_postgui.hal because
-# we need time for the userspace components to load
-#
-net moving <= motion.current-vel
 
 # From estop circuit 5V = estop satisfied, relay closed, ready for motion
 setp debounce.0.delay 5

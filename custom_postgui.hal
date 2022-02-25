@@ -20,14 +20,6 @@ net hwrun hwpanel.0.PAUSE => halui.program.resume
 net hwstop hwpanel.0.STOP => halui.program.stop
 net hwpanel-heartbeat pyvcp.heartbeat-indicator-led
 
-
-
-net moving => oilerctl.velocity
-setp oilerctl.offseconds 1350
-setp oilerctl.onseconds 1350
-setp oilerctl.debounceseconds 60
-net pumpon oilerctl.oiler-cmd 
-
 #define STEP 27
 #define RUN 28
 #define STOP 29
