@@ -8,7 +8,7 @@ loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EM
 
 loadrt stepgen step_type=0,0,0,0
 loadrt abs count=1
-loadrt sum2 count=8
+
 loadrt charge_pump
 loadrt fuji_frenic_vfd
 loadrt hwpanel
@@ -46,24 +46,13 @@ addf not-estop servo-thread
 addf not-watchdogok servo-thread
 addf msgwatchdog servo-thread
 addf mux4-spindle-cmd servo-thread
-addf sum2.0 servo-thread
-addf sum2.1 servo-thread
-addf sum2.2 servo-thread
-addf sum2.3 servo-thread
-addf sum2.4 servo-thread
-addf sum2.5 servo-thread
-addf sum2.6 servo-thread
-addf sum2.7 servo-thread
-
 
 # CONNECTIONS TO NETS
 
 # HOMING SWITCHES
 
 net x-home-sw axis.0.home-sw-in
-
 net y-home-sw axis.1.home-sw-in
-
 net z-home-sw axis.2.home-sw-in
 
 # From estop circuit 5V = estop satisfied, relay closed, ready for motion
@@ -74,34 +63,23 @@ net estop-relay-closed-raw => debounce.0.0.in
 
 net estopreset => fuji-frenic-vfd.0.resetCmd
 
+# X-Axis
+
 setp stepgen.0.position-scale [AXIS_0]SCALE
 setp stepgen.0.steplen 20000
 setp stepgen.0.stepspace 20000
 setp stepgen.0.dirhold 35000
 setp stepgen.0.dirsetup 35000
 setp stepgen.0.maxaccel [AXIS_0]STEPGEN_MAXACCEL
-setp sum2.4.gain1 -1.0
-setp sum2.5.gain1 -1.0
-setp sum2.6.gain1 -1.0
-setp sum2.7.gain1 -1.0
 
-# MRW Below is the command without intervention
 #net xpos-cmd axis.0.motor-pos-cmd => stepgen.0.position-cmd
-# MRW This is the command with manual intervention
-net xpos-cmd-control axis.0.motor-pos-cmd => sum2.0.in0
-net xpos-ring-reading sum2.0.in1 
-net xpos-cmd sum2.0.out  => stepgen.0.position-cmd
-
-# MRW No intervention
 #net xpos-fb stepgen.0.position-fb => axis.0.motor-pos-fb
-# MRW with feeback side intervention
-net xpos-fb-from-sg stepgen.0.position-fb => sum2.4.in0 
-net xpos-ring-reading sum2.4.in1
-net xpos-fb sum2.4.out => axis.0.motor-pos-fb
 
 net xstep <= stepgen.0.step
 net xdir <= stepgen.0.dir
 net xenable axis.0.amp-enable-out => stepgen.0.enable
+
+# Y-Axis 
 
 setp stepgen.1.position-scale [AXIS_1]SCALE
 setp stepgen.1.steplen 20000 
@@ -110,16 +88,8 @@ setp stepgen.1.dirhold 35000
 setp stepgen.1.dirsetup 35000
 setp stepgen.1.maxaccel [AXIS_1]STEPGEN_MAXACCEL
 
-# Original Y Axis Config without handwheel ring reading
 #net ypos-cmd axis.1.motor-pos-cmd => stepgen.1.position-cmd
 #net ypos-fb stepgen.1.position-fb => axis.1.motor-pos-fb
-
-net ypos-fb-from-sg stepgen.1.position-fb => sum2.5.in0 
-net ypos-ring-reading sum2.5.in1
-net ypos-fb sum2.5.out => axis.1.motor-pos-fb
-net ypos-cmd-control axis.1.motor-pos-cmd => sum2.1.in0
-net ypos-ring-reading sum2.1.in1 
-net ypos-cmd sum2.1.out  => stepgen.1.position-cmd
 
 net ystep <= stepgen.1.step
 net ydir <= stepgen.1.dir
@@ -132,21 +102,16 @@ setp stepgen.2.dirhold 35000
 setp stepgen.2.dirsetup 35000
 setp stepgen.2.maxaccel [AXIS_2]STEPGEN_MAXACCEL
 
+# Z-Axis 
 
-# Z-Axis Ring Reading 
 #net zpos-cmd axis.2.motor-pos-cmd => stepgen.2.position-cmd
 #net zpos-fb stepgen.2.position-fb => axis.2.motor-pos-fb
-
-net zpos-fb-from-sg stepgen.2.position-fb => sum2.6.in0 
-net zpos-ring-reading sum2.6.in1
-net zpos-fb sum2.6.out => axis.2.motor-pos-fb
-net zpos-cmd-control axis.2.motor-pos-cmd => sum2.2.in0
-net zpos-ring-reading sum2.2.in1 
-net zpos-cmd sum2.2.out  => stepgen.2.position-cmd
 
 net zstep <= stepgen.2.step
 net zdir <= stepgen.2.dir
 net zenable axis.2.amp-enable-out => stepgen.2.enable
+
+# A-Axis
 
 setp stepgen.3.position-scale [AXIS_3]SCALE
 setp stepgen.3.steplen 1
@@ -154,6 +119,7 @@ setp stepgen.3.stepspace 0
 setp stepgen.3.dirhold 35000
 setp stepgen.3.dirsetup 35000
 setp stepgen.3.maxaccel [AXIS_3]STEPGEN_MAXACCEL
+
 net apos-cmd axis.3.motor-pos-cmd => stepgen.3.position-cmd
 net apos-fb stepgen.3.position-fb => axis.3.motor-pos-fb
 net astep <= stepgen.3.step
