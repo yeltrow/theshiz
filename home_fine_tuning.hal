@@ -21,7 +21,6 @@ addf sum2.7 servo-thread
 
 # Gain on feedback channel is set
 # to subtract the offset
-zpo
 setp sum2.4.gain1 -1.0
 setp sum2.5.gain1 -1.0
 setp sum2.6.gain1 -1.0
