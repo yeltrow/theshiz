@@ -1,0 +1,35 @@
+# modbus.hal
+# 
+# Provides HAL mappings for all of the modbus nodes specific to 
+# my milling machine
+#
+
+# LOAD USERSPACE COMPONENT
+loadusr -W mb2hal config=mb2hal.ini
+
+# Modbus node list
+# 
+# Modbus is use on an FTDI to RS485 converter for the VFD
+
+# Spindle Connections
+net spindle-mbcmd mb2hal.node1.vfd.speedCmd.00
+net vfdOperCmd => mb2hal.node1.vfdOperCmd.00
+net hal2vfdstatus mb2hal.node1.vfdOperStatus.00.int 
+
+# Modbus is used on a virtual comport to an arduino for the 
+# hardware button panel (switches and knobs).
+
+# data from arduino knobs and switches to modbus
+
+net mb2hwpanel0 mb2hal.RegIn.00.int
+net mb2hwpanel1 mb2hal.RegIn.01.int
+net mb2hwpanel2 mb2hal.RegIn.02.int
+net mb2hwpanel3 mb2hal.RegIn.03.int
+net mb2hwpanel4 mb2hal.RegIn.04.int
+net mb2hwpanel5 mb2hal.RegIn.05.int
+net mb2hwpanel6 mb2hal.RegIn.06.int
+net mb2hwpanel7 mb2hal.RegIn.07.int
+
+# Output from linuxcnc to hwpanel (heartbeat, lights)
+net mb2hwpanel9 mb2hal.RegOut.00
+

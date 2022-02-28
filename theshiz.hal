@@ -14,7 +14,6 @@ loadrt not names=not-estop
 loadrt debounce cfg=1
 
 # LOAD USERSPACE COMPONENTES
-loadusr -W mb2hal config=mb2hal.ini
 
 # ADD FUNCTIONS TO BASE THREAD 
 
@@ -111,11 +110,6 @@ net astep <= stepgen.3.step
 net adir <= stepgen.3.dir
 net aenable axis.3.amp-enable-out => stepgen.3.enable
 
-# Spindle Connections
-
-net spindle-mbcmd mb2hal.node1.vfd.speedCmd.00
-net vfdOperCmd => mb2hal.node1.vfdOperCmd.00
-net hal2vfdstatus mb2hal.node1.vfdOperStatus.00.int 
 
 # EMC is running and is not estopped, we enable the hardware estop system to perform its
 # work.  Estop reset is performed via the soft button on the user interface

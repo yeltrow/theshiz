@@ -31,30 +31,6 @@ addf hwpanel.0 servo-thread
 addf watchdog.set-timeouts servo-thread
 addf watchdog.process servo-thread
 addf msgwatchdog servo-thread
-#
-# BEGIN MODBUS MAPPING
-#
-
-# HARDWARE BUTTON PANEL MAPPING TO MB2HAL PINS
-# Move me to the modbus file.
-# Map the mobbus node words to the hwpanel nets
-#
-
-net mb2hwpanel0 mb2hal.RegIn.00.int
-net mb2hwpanel1 mb2hal.RegIn.01.int
-net mb2hwpanel2 mb2hal.RegIn.02.int
-net mb2hwpanel3 mb2hal.RegIn.03.int
-net mb2hwpanel4 mb2hal.RegIn.04.int
-net mb2hwpanel5 mb2hal.RegIn.05.int
-net mb2hwpanel6 mb2hal.RegIn.06.int
-net mb2hwpanel7 mb2hal.RegIn.07.int
-
-# Output from linuxcnc to hwpanel 
-net mb2hwpanel9 mb2hal.RegOut.00
-
-#
-# END MODBUS MAPPING
-#
 
 # HARDWARE BUTTON PANEL 
 # 
