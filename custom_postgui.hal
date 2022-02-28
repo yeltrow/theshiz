@@ -41,6 +41,11 @@ net now-tool pyvcp.tool-now
 net next-tool pyvcp.tool-number
 net tool-change-button pyvcp.force-tool-change
 
+# IO Connections for manual tool change buttons.
+net tool-change-button halui.mdi-command-01
+net next-tool motion.analog-in-00
+net now-tool iocontrol.0.tool-number
+
 # PYVCP Ring Reading Axis Offset
 net xpos-ring-reading pyvcp.x-ring-reading
 net ypos-ring-reading pyvcp.y-ring-reading
