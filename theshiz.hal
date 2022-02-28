@@ -11,21 +11,15 @@ loadrt abs count=1
 
 loadrt charge_pump
 loadrt fuji_frenic_vfd
-loadrt hwpanel
-loadrt watchdog num_inputs=1
-loadrt not names=not-estop,not-watchdogok
-loadrt knob2float
+loadrt not names=not-estop
 loadrt debounce cfg=1
-loadrt message names=msgwatchdog messages="Button_Control_Panel_Watchdog_Timout "
+
 loadrt mux4 names=mux4-spindle-cmd
 
 # LOAD USERSPACE COMPONENTES
 loadusr -W mb2hal config=mb2hal.ini
 
-
 # ADD FUNCTIONS TO BASE THREAD 
-
-
 
 addf debounce.0 base-thread
 addf stepgen.make-pulses base-thread
@@ -39,12 +33,9 @@ addf motion-controller servo-thread
 addf stepgen.update-freq servo-thread
 addf abs.0 servo-thread
 addf fuji-frenic-vfd.0 servo-thread
-addf hwpanel.0 servo-thread
-addf watchdog.set-timeouts servo-thread
-addf watchdog.process servo-thread
+
 addf not-estop servo-thread
-addf not-watchdogok servo-thread
-addf msgwatchdog servo-thread
+
 addf mux4-spindle-cmd servo-thread
 
 # CONNECTIONS TO NETS
@@ -145,62 +136,12 @@ net variator-setting => fuji-frenic-vfd.0.nominalRPM
 net hal2vfdstatus mb2hal.node1.vfdOperStatus.00.int 
 net hal2vfdstatus fuji-frenic-vfd.0.vfdOperStateReg
 
-# HARDWARE BUTTON PANEL
-
-net mb2hwpanel0 mb2hal.RegIn.00.int => hwpanel.0.reg0
-net mb2hwpanel1 mb2hal.RegIn.01.int => hwpanel.0.reg1
-net mb2hwpanel2 mb2hal.RegIn.02.int => hwpanel.0.reg2
-net mb2hwpanel3 mb2hal.RegIn.03.int => hwpanel.0.reg3
-net mb2hwpanel4 mb2hal.RegIn.04.int => hwpanel.0.reg4
-net mb2hwpanel5 mb2hal.RegIn.05.int => hwpanel.0.reg5
-net mb2hwpanel6 mb2hal.RegIn.06.int => hwpanel.0.reg6
-net mb2hwpanel7 mb2hal.RegIn.07.int => hwpanel.0.reg7
-
-# HARDWARE BUTTON PANEL RUN BUTTON
-net run-button <= hwpanel.0.RUN
-net run-button => halui.program.run
-net run-button => halui.mode.auto 
-
-# HARDWARE PANEL SPINDLE SWITCH
-net spindle-on-sw <= hwpanel.0.SPINDLEON
-net spindle-off-sw <= hwpanel.0.SPINDLEOFF
 net spindle-on-sw => mux4-spindle-cmd.sel0
 net spindle-off-sw => mux4-spindle-cmd.sel1
 
 net spindle-on-sw => halui.spindle.start
 net spindle-off-sw => halui.spindle.stop
 
-# Feed override knob
-net focounts hwpanel.0.feedcounts halui.feed-override.counts
-setp halui.feed-override.scale .01
-setp halui.feed-override.count-enable 1
-
-# Spindle Override Knob
-
-net spindle-knob-counts <= hwpanel.0.spindlecounts
-net spindle-knob-counts => halui.spindle-override.counts
-
-# JOGWHEEL
-source jogwheel.hal
- 
-# MAX VELOCITY KNOB
-source maxVelocityControl.hal
-
-# HARDWARE BUTTON PANEL WATCHDOG
-setp msgwatchdog.edge 0
-setp watchdog.timeout-0 0.600
-
-net hwpanel-heartbeat hwpanel.0.HEARTBEAT watchdog.input-0
-net msg-hw-panel-wd watchdog.ok-out msgwatchdog.trigger
-net estopreset not-estop.in
-net estopreset-not not-estop.out watchdog.enable-in
-net mb2hwpanel9 hwpanel.0.reg9 => mb2hal.RegOut.00
-net msg-hw-panel-wd not-watchdogok.in
-net watchdogfault not-watchdogok.out => halui.machine.off
-# button NONE has been repurposed to do a rapid to the tool change Z0 position
-net rapid-to-tool-change-pos hwpanel.0.NONEBUT
-# MDI Command G0 G53 Z0 Machine coordinate move G53
-net rapid-to-tool-change-pos halui.mdi-command-00
 
 # EMC is running and is not estopped, we enable the hardware estop system to perform its
 # work.  Estop reset is performed via the soft button on the user interface
@@ -211,7 +152,11 @@ net charge-pump <= charge-pump.out
 # it will only "stick" if the estop relay pulls in and stays.
 # iocontrol.0.user-request-enable: (Bit, Out) TRUE when the user has requested that estop be cleared
 # 100ms long pulse is created by linuxcnc.
+
 net estopreset <=  iocontrol.0.user-request-enable 
+net estopreset not-estop.in
+net estopreset-not not-estop.out 
+
 # iocontrol.0.emc-enable-in: Should be driven FALSE when an external estop condition exists.
 net estop-relay-closed => iocontrol.0.emc-enable-in
 

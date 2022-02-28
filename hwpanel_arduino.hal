@@ -1,0 +1,113 @@
+# hwpanel_arduino.hal
+# This file enables a set of hardwired switches and knobs to control
+# linuxcnc.
+# The hardwired controls are on an arduino that uses the modbus
+# RTU protocol to talk to mb2hal, the modbus server for linuxcnc.
+#
+# The controls update at about 20Hz or more using the arduino
+# built in USB port.
+#
+# A watchdog is used to fault the machine if the hardwired panel 
+# fails to communicate for 1/2 second at any time.  
+# It will display a fault message using the message module.
+# It also will trigger the machine to turn off control power.
+# This only works if the machine has the reset button pressed after startup.
+# to reset any existing faults.
+#
+# The hwpanel.comp hal component reads the state of the heartbeat bit
+# from the modbus register.  It then inverts it and writes that to the
+# modbus register that gets sent to the arduino. The inversion causes
+# the bit to toggle as fast as communications with arduino will allow.
+# 
+
+loadrt hwpanel
+loadrt watchdog num_inputs=1
+# MUST USE TWOPASS in [HAL] section of .ini 
+loadrt not names=not-watchdogok
+loadrt message names=msgwatchdog messages="Button_Control_Panel_Watchdog_Timout "
+
+addf not-watchdogok servo-thread
+addf hwpanel.0 servo-thread
+addf watchdog.set-timeouts servo-thread
+addf watchdog.process servo-thread
+addf msgwatchdog servo-thread
+#
+# BEGIN MODBUS MAPPING
+#
+
+# HARDWARE BUTTON PANEL MAPPING TO MB2HAL PINS
+# Move me to the modbus file.
+# Map the mobbus node words to the hwpanel nets
+#
+
+net mb2hwpanel0 mb2hal.RegIn.00.int
+net mb2hwpanel1 mb2hal.RegIn.01.int
+net mb2hwpanel2 mb2hal.RegIn.02.int
+net mb2hwpanel3 mb2hal.RegIn.03.int
+net mb2hwpanel4 mb2hal.RegIn.04.int
+net mb2hwpanel5 mb2hal.RegIn.05.int
+net mb2hwpanel6 mb2hal.RegIn.06.int
+net mb2hwpanel7 mb2hal.RegIn.07.int
+
+# Output from linuxcnc to hwpanel 
+net mb2hwpanel9 mb2hal.RegOut.00
+
+#
+# END MODBUS MAPPING
+#
+
+# HARDWARE BUTTON PANEL 
+# 
+# Map all of the data from the knobs and switches in the hwpanel
+# to the modbus words they control
+
+net mb2hwpanel0 hwpanel.0.reg0
+net mb2hwpanel1 hwpanel.0.reg1
+net mb2hwpanel2 hwpanel.0.reg2
+net mb2hwpanel3 hwpanel.0.reg3
+net mb2hwpanel4 hwpanel.0.reg4
+net mb2hwpanel5 hwpanel.0.reg5
+net mb2hwpanel6 hwpanel.0.reg6
+net mb2hwpanel7 hwpanel.0.reg7
+
+# Output from linuxcnc to hwpanel 
+net mb2hwpanel9 hwpanel.0.reg9 
+
+# HARDWARE BUTTON PANEL RUN BUTTON
+net run-button <= hwpanel.0.RUN
+net run-button => halui.program.run
+net run-button => halui.mode.auto 
+
+# HARDWARE PANEL SPINDLE SWITCH
+net spindle-on-sw <= hwpanel.0.SPINDLEON
+net spindle-off-sw <= hwpanel.0.SPINDLEOFF
+
+# Feed override knob
+net focounts hwpanel.0.feedcounts halui.feed-override.counts
+setp halui.feed-override.scale .01
+setp halui.feed-override.count-enable 1
+
+# Spindle Override Knob
+
+net spindle-knob-counts <= hwpanel.0.spindlecounts
+net spindle-knob-counts => halui.spindle-override.counts
+
+# MAX VELOCITY KNOB
+source maxVelocityControl.hal
+
+# HARDWARE BUTTON PANEL WATCHDOG
+
+setp msgwatchdog.edge 0
+setp watchdog.timeout-0 0.600
+
+net hwpanel-heartbeat hwpanel.0.HEARTBEAT watchdog.input-0
+net msg-hw-panel-wd watchdog.ok-out msgwatchdog.trigger
+net estopreset-not watchdog.enable-in
+
+net msg-hw-panel-wd not-watchdogok.in
+net watchdogfault not-watchdogok.out => halui.machine.off
+# button NONE has been repurposed to do a rapid to the tool change Z0 position
+net rapid-to-tool-change-pos hwpanel.0.NONEBUT
+# MDI Command G0 G53 Z0 Machine coordinate move G53
+net rapid-to-tool-change-pos halui.mdi-command-00
+
