@@ -7,14 +7,13 @@ loadrt trivkins
 loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES
 
 loadrt stepgen step_type=0,0,0,0
-loadrt abs count=1
+
 
 loadrt charge_pump
 loadrt fuji_frenic_vfd
 loadrt not names=not-estop
 loadrt debounce cfg=1
 
-loadrt mux4 names=mux4-spindle-cmd
 
 # LOAD USERSPACE COMPONENTES
 loadusr -W mb2hal config=mb2hal.ini
@@ -36,7 +35,6 @@ addf fuji-frenic-vfd.0 servo-thread
 
 addf not-estop servo-thread
 
-addf mux4-spindle-cmd servo-thread
 
 # CONNECTIONS TO NETS
 
@@ -117,34 +115,15 @@ net astep <= stepgen.3.step
 net adir <= stepgen.3.dir
 net aenable axis.3.amp-enable-out => stepgen.3.enable
 
-# SPINDLE
-
-setp halui.spindle-override.scale 0.005
-net program-spindle-cmd <= motion.spindle-speed-out-abs
-net program-spindle-cmd mux4-spindle-cmd.in0
-net vcp-spindle-cmd mux4-spindle-cmd.in1
-net spindle-cmd mux4-spindle-cmd.out
-
-net spindle-at-speed => motion.spindle-at-speed
+# Spindle Connections
 net spindle-cmd => fuji-frenic-vfd.0.desiredRPM
 net spindle-mbcmd fuji-frenic-vfd.0.speedReg => mb2hal.node1.vfd.speedCmd.00
 net vfdOperCmd <= fuji-frenic-vfd.0.operReg => mb2hal.node1.vfdOperCmd.00
-net spindle-fwd motion.spindle-forward => fuji-frenic-vfd.0.fwdCmd
-net spindle-rev motion.spindle-reverse => fuji-frenic-vfd.0.revCmd
+net spindle-fwd fuji-frenic-vfd.0.fwdCmd
+net spindle-rev fuji-frenic-vfd.0.revCmd
 net variator-setting => fuji-frenic-vfd.0.nominalRPM
-
 net hal2vfdstatus mb2hal.node1.vfdOperStatus.00.int 
 net hal2vfdstatus fuji-frenic-vfd.0.vfdOperStateReg
-
-net spindle-on-sw => mux4-spindle-cmd.sel0
-net spindle-off-sw => mux4-spindle-cmd.sel1
-
-net spindle-on-sw => halui.spindle.start
-net spindle-off-sw => halui.spindle.stop
-
-# absolute-spindle-vel is used in the pyvcp only 
-net spindle-cmd => abs.0.in
-net absolute-spindle-vel <= abs.0.out 
 
 # EMC is running and is not estopped, we enable the hardware estop system to perform its
 # work.  Estop reset is performed via the soft button on the user interface

@@ -1,0 +1,39 @@
+# spindle.hal
+# 
+# Provides manual/automatic spindle speed selection via mux.
+# Connects spindle hal to on/off command pins.
+#
+
+loadrt mux4 names=mux4-spindle-cmd
+addf mux4-spindle-cmd servo-thread
+loadrt abs count=1
+
+# SPINDLE
+
+setp halui.spindle-override.scale 0.005
+
+# Only positive spindle speeds should go to the drive.
+net spindle-cmd => abs.0.in
+net absolute-spindle-vel <= abs.0.out 
+net program-spindle-cmd <= motion.spindle-speed-out-abs
+net program-spindle-cmd mux4-spindle-cmd.in0
+
+# route manual speed setting to the mux
+net vcp-spindle-cmd mux4-spindle-cmd.in1
+
+# OUTPUT OF MUX TO DRIVE
+net spindle-cmd mux4-spindle-cmd.out
+
+net spindle-at-speed => motion.spindle-at-speed
+
+net spindle-fwd motion.spindle-forward 
+
+net spindle-rev motion.spindle-reverse
+
+
+net spindle-on-sw => mux4-spindle-cmd.sel0
+net spindle-off-sw => mux4-spindle-cmd.sel1
+
+net spindle-on-sw => halui.spindle.start
+net spindle-off-sw => halui.spindle.stop
+
