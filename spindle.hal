@@ -5,8 +5,11 @@
 #
 
 loadrt mux4 names=mux4-spindle-cmd
-addf mux4-spindle-cmd servo-thread
 loadrt abs count=1
+loadrt fuji_frenic_vfd
+
+addf abs.0 servo-thread
+addf fuji-frenic-vfd.0 servo-thread
 
 # SPINDLE
 
@@ -37,3 +40,12 @@ net spindle-off-sw => mux4-spindle-cmd.sel1
 net spindle-on-sw => halui.spindle.start
 net spindle-off-sw => halui.spindle.stop
 
+# Connections to VFD
+
+net spindle-cmd => fuji-frenic-vfd.0.desiredRPM
+net spindle-mbcmd fuji-frenic-vfd.0.speedReg 
+net spindle-fwd fuji-frenic-vfd.0.fwdCmd
+net spindle-rev fuji-frenic-vfd.0.revCmd
+net variator-setting => fuji-frenic-vfd.0.nominalRPM
+net vfdOperCmd <= fuji-frenic-vfd.0.operReg
+net hal2vfdstatus fuji-frenic-vfd.0.vfdOperStateReg
