@@ -24,7 +24,7 @@ loadrt hwpanel
 loadrt watchdog num_inputs=1
 # MUST USE TWOPASS in [HAL] section of .ini 
 loadrt not names=not-watchdogok
-loadrt message names=msgwatchdog messages="Button_Control_Panel_Watchdog_Timout "
+loadrt message names=msgwatchdog messages="Button_Control_Panel_Watchdog_Timout"
 
 addf not-watchdogok servo-thread
 addf hwpanel.0 servo-thread
