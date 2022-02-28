@@ -5,8 +5,7 @@
 # **** Use COMMANDED spindle velocity from LinuxCNC because no spindle encoder was specified
 # **** COMANDED velocity is signed so we use absolute component (abs.0) to remove sign
 
-net spindle-cmd => abs.0.in
-net absolute-spindle-vel <= abs.0.out => pyvcp.spindle-speed
+net absolute-spindle-vel => pyvcp.spindle-speed
 
 # **** force spindle at speed indicator true because we have no feedback ****
 
@@ -14,10 +13,6 @@ net vcp-spindle-cmd <= pyvcp.spindle-setting-f
 sets spindle-at-speed true
 net variator-setting <= pyvcp.variator-setting-f
 
-net hwpause hwpanel.0.FEEDHOLD => halui.program.pause
-net hwstep hwpanel.0.STEP => halui.program.step
-net hwrun hwpanel.0.PAUSE => halui.program.resume
-net hwstop hwpanel.0.STOP => halui.program.stop
 net hwpanel-heartbeat pyvcp.heartbeat-indicator-led
 
 #define STEP 27

@@ -142,6 +142,9 @@ net spindle-off-sw => mux4-spindle-cmd.sel1
 net spindle-on-sw => halui.spindle.start
 net spindle-off-sw => halui.spindle.stop
 
+# absolute-spindle-vel is used in the pyvcp only 
+net spindle-cmd => abs.0.in
+net absolute-spindle-vel <= abs.0.out 
 
 # EMC is running and is not estopped, we enable the hardware estop system to perform its
 # work.  Estop reset is performed via the soft button on the user interface

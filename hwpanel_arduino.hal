@@ -78,6 +78,19 @@ net run-button <= hwpanel.0.RUN
 net run-button => halui.program.run
 net run-button => halui.mode.auto 
 
+# PAUSE/FEEDHOLD
+net hwpause hwpanel.0.FEEDHOLD => halui.program.pause
+
+# STEP CODE
+net hwstep hwpanel.0.STEP => halui.program.step
+
+# PAUSE/RESUME
+net hwrun hwpanel.0.PAUSE => halui.program.resume
+
+# STOP
+net hwstop hwpanel.0.STOP => halui.program.stop
+
+
 # HARDWARE PANEL SPINDLE SWITCH
 net spindle-on-sw <= hwpanel.0.SPINDLEON
 net spindle-off-sw <= hwpanel.0.SPINDLEOFF
