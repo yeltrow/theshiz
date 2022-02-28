@@ -106,8 +106,11 @@ net estopreset-not watchdog.enable-in
 
 net msg-hw-panel-wd not-watchdogok.in
 net watchdogfault not-watchdogok.out => halui.machine.off
+
+
 # button NONE has been repurposed to do a rapid to the tool change Z0 position
 net rapid-to-tool-change-pos hwpanel.0.NONEBUT
+
 # MDI Command G0 G53 Z0 Machine coordinate move G53
 net rapid-to-tool-change-pos halui.mdi-command-00
 
