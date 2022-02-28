@@ -10,8 +10,7 @@ loadrt fuji_frenic_vfd
 
 addf abs.0 servo-thread
 addf fuji-frenic-vfd.0 servo-thread
-
-# SPINDLE
+addf mux4-spindle-cmd servo-thread
 
 setp halui.spindle-override.scale 0.005
 
