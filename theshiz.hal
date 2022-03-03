@@ -8,18 +8,11 @@ loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EM
 
 loadrt stepgen step_type=0,0,0,0
 
-loadrt charge_pump
-
-loadrt not names=not-estop
-loadrt debounce cfg=1
-
 # LOAD USERSPACE COMPONENTES
 
 # ADD FUNCTIONS TO BASE THREAD 
 
-addf debounce.0 base-thread
 addf stepgen.make-pulses base-thread
-addf charge-pump base-thread
 
 # ADD FUNTIONS TO SERVO THREAD
 
@@ -28,7 +21,6 @@ addf motion-command-handler servo-thread
 addf motion-controller servo-thread
 addf stepgen.update-freq servo-thread
 
-addf not-estop servo-thread
 
 
 # CONNECTIONS TO NETS
@@ -38,14 +30,6 @@ addf not-estop servo-thread
 net x-home-sw axis.0.home-sw-in
 net y-home-sw axis.1.home-sw-in
 net z-home-sw axis.2.home-sw-in
-
-# From estop circuit 5V = estop satisfied, relay closed, ready for motion
-setp debounce.0.delay 5
-net estop-relay-closed <= debounce.0.0.out
-
-net estop-relay-closed-raw => debounce.0.0.in
-
-net estopreset => fuji-frenic-vfd.0.resetCmd
 
 # X-Axis
 
@@ -109,24 +93,6 @@ net apos-fb stepgen.3.position-fb => axis.3.motor-pos-fb
 net astep <= stepgen.3.step
 net adir <= stepgen.3.dir
 net aenable axis.3.amp-enable-out => stepgen.3.enable
-
-
-# EMC is running and is not estopped, we enable the hardware estop system to perform its
-# work.  Estop reset is performed via the soft button on the user interface
-# Feedback to lcnc is performed via a hardware pin from the relay.
-net estop-out charge-pump.enable iocontrol.0.user-enable-out
-net charge-pump <= charge-pump.out
-# We want to request a reset relay pulse from the HMI to the estop hardare
-# it will only "stick" if the estop relay pulls in and stays.
-# iocontrol.0.user-request-enable: (Bit, Out) TRUE when the user has requested that estop be cleared
-# 100ms long pulse is created by linuxcnc.
-
-net estopreset <=  iocontrol.0.user-request-enable 
-net estopreset not-estop.in
-net estopreset-not not-estop.out 
-
-# iocontrol.0.emc-enable-in: Should be driven FALSE when an external estop condition exists.
-net estop-relay-closed => iocontrol.0.emc-enable-in
 
 loadusr -W hal_manualtoolchange
 net tool-change iocontrol.0.tool-change => hal_manualtoolchange.change

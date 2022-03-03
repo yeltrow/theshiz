@@ -20,6 +20,9 @@ net absolute-spindle-vel <= abs.0.out
 net program-spindle-cmd <= motion.spindle-speed-out-abs
 net program-spindle-cmd mux4-spindle-cmd.in0
 
+# Fault resetting occurs on pressing the reset button for the estop
+net estopreset => fuji-frenic-vfd.0.resetCmd
+
 # route manual speed setting to the mux
 net vcp-spindle-cmd mux4-spindle-cmd.in1
 
