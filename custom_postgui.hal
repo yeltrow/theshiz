@@ -10,7 +10,7 @@ net absolute-spindle-vel => pyvcp.spindle-speed
 # **** force spindle at speed indicator true because we have no feedback ****
 
 net vcp-spindle-cmd <= pyvcp.spindle-setting-f
-sets spindle-at-speed true
+#sets spindle-at-speed true
 net variator-setting <= pyvcp.variator-setting-f
 
 net hwpanel-heartbeat pyvcp.heartbeat-indicator-led

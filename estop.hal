@@ -1,11 +1,9 @@
 
 
-loadrt charge_pump
 loadrt not names=not-estop
 loadrt debounce cfg=1
 
-addf debounce.0 base-thread
-addf charge-pump base-thread
+addf debounce.0 servo-thread
 
 addf not-estop servo-thread
 
@@ -17,14 +15,18 @@ net estop-relay-closed-raw => debounce.0.0.in
 # EMC is running and is not estopped, we enable the hardware estop system to perform its
 # work.  Estop reset is performed via the soft button on the user interface
 # Feedback to lcnc is performed via a hardware pin from the relay.
-net estop-out charge-pump.enable iocontrol.0.user-enable-out
-net charge-pump <= charge-pump.out
+
+# Handled in Mesa Config Now
+# net estop-out charge-pump.enable iocontrol.0.user-enable-out
+
 # We want to request a reset relay pulse from the HMI to the estop hardare
 # it will only "stick" if the estop relay pulls in and stays.
 # iocontrol.0.user-request-enable: (Bit, Out) TRUE when the user has requested that estop be cleared
 # 100ms long pulse is created by linuxcnc.
 
 net estopreset <=  iocontrol.0.user-request-enable 
+net estopreset hm2_7i76e.0.7i76.0.0.output-01
+
 net estopreset not-estop.in
 net estopreset-not not-estop.out 
 
