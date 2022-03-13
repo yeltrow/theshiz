@@ -12,12 +12,12 @@ addf abs.0 servo-thread
 addf fuji-frenic-vfd.0 servo-thread
 addf mux4-spindle-cmd servo-thread
 
-setp halui.spindle-override.scale 0.005
+setp halui.spindle.0.override.scale 0.005
 
 # Only positive spindle speeds should go to the drive.
 net spindle-cmd => abs.0.in
 net absolute-spindle-vel <= abs.0.out 
-net program-spindle-cmd <= motion.spindle-speed-out-abs
+net program-spindle-cmd <= spindle.0.speed-out-rps-abs
 net program-spindle-cmd mux4-spindle-cmd.in0
 
 # Fault resetting occurs on pressing the reset button for the estop
@@ -29,18 +29,23 @@ net vcp-spindle-cmd mux4-spindle-cmd.in1
 # OUTPUT OF MUX TO DRIVE
 net spindle-cmd mux4-spindle-cmd.out
 
-net spindle-at-speed => motion.spindle-at-speed
+net spindle-at-speed => spindle.0.at-speed
 
-net spindle-fwd motion.spindle-forward 
+unlinkp halui.spindle.0.forward 
+net spindle-fwd halui.spindle.0.runs-forward
 
-net spindle-rev motion.spindle-reverse
+unlinkp halui.spindle.0.reverse
+net spindle-rev halui.spindle.0.runs-backward
 
 
 net spindle-on-sw => mux4-spindle-cmd.sel0
 net spindle-off-sw => mux4-spindle-cmd.sel1
 
-net spindle-on-sw => halui.spindle.start
-net spindle-off-sw => halui.spindle.stop
+unlinkp halui.spindle.0.start
+net spindle-on-sw => halui.spindle.0.start
+
+unlinkp halui.spindle.0.stop
+net spindle-off-sw => halui.spindle.0.stop
 
 # Connections to VFD
 

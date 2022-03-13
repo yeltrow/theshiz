@@ -7,6 +7,10 @@ addf debounce.0 servo-thread
 
 addf not-estop servo-thread
 
+unlinkp hm2_7i76e.0.7i76.0.0.output-00
+#unlinkp hm2_7i76e.0.7i76.0.0.output-01
+net machine-is-on hm2_7i76e.0.7i76.0.0.output-07
+
 # From estop circuit 5V = estop satisfied, relay closed, ready for motion
 setp debounce.0.delay 5
 net estop-relay-closed <= debounce.0.0.out
@@ -25,10 +29,12 @@ net estop-relay-closed-raw => debounce.0.0.in
 # 100ms long pulse is created by linuxcnc.
 
 net estopreset <=  iocontrol.0.user-request-enable 
-net estopreset hm2_7i76e.0.7i76.0.0.output-01
+
+net estopreset hm2_7i76e.0.7i76.0.0.output-00
 
 net estopreset not-estop.in
 net estopreset-not not-estop.out 
 
 # iocontrol.0.emc-enable-in: Should be driven FALSE when an external estop condition exists.
-net estop-relay-closed => iocontrol.0.emc-enable-in
+# This is handled in the pncconf generated file
+# net estop-relay-closed => iocontrol.0.emc-enable-in

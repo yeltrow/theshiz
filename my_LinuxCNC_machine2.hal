@@ -26,10 +26,10 @@ setp hm2_7i76e.0.stepgen.timer-number 1
 
 
 # --- ESTOP-OUT ---
-net estop-out  =>     hm2_7i76e.0.7i76.0.0.output-00
+net estop-out  =>     hm2_7i76e.0.7i76.0.0.output-01
 
 # --- MACHINE-IS-ENABLED ---
-net machine-is-enabled  =>     hm2_7i76e.0.7i76.0.0.output-01
+net machine-is-enabled  =>     hm2_7i76e.0.7i76.0.0.output-00
 
 # --- COOLANT-FLOOD ---
 net coolant-flood  =>     hm2_7i76e.0.7i76.0.0.output-03
@@ -44,22 +44,22 @@ net coolant-mist  =>     hm2_7i76e.0.7i76.0.0.output-04
 net estop-ext     <=  hm2_7i76e.0.7i76.0.0.input-00
 
 # --- MIN-HOME-X ---
-net min-home-x     <=  hm2_7i76e.0.7i76.0.0.input-01
+net min-home-x     <=  hm2_7i76e.0.7i76.0.0.input-01-not
 
 # --- MAX-X ---
-net max-x     <=  hm2_7i76e.0.7i76.0.0.input-02
+net max-x     <=  hm2_7i76e.0.7i76.0.0.input-02-not
 
 # --- MIN-Y ---
-net min-y     <=  hm2_7i76e.0.7i76.0.0.input-03
+net min-y     <=  hm2_7i76e.0.7i76.0.0.input-03-not
 
 # --- MAX-HOME-Y ---
-net max-home-y     <=  hm2_7i76e.0.7i76.0.0.input-04
+net max-home-y     <=  hm2_7i76e.0.7i76.0.0.input-04-not
 
 # --- MIN-Z ---
-net min-z     <=  hm2_7i76e.0.7i76.0.0.input-05
+net min-z     <=  hm2_7i76e.0.7i76.0.0.input-05-not
 
 # --- MAX-HOME-Z ---
-net max-home-z     <=  hm2_7i76e.0.7i76.0.0.input-06
+net max-home-z     <=  hm2_7i76e.0.7i76.0.0.input-06-not
 
 #*******************
 #  AXIS X JOINT 0

@@ -79,7 +79,7 @@ setp halui.feed-override.count-enable 1
 # Spindle Override Knob
 
 net spindle-knob-counts <= hwpanel.0.spindlecounts
-net spindle-knob-counts => halui.spindle-override.counts
+net spindle-knob-counts => halui.spindle.0.override.counts
 
 # MAX VELOCITY KNOB
 source maxVelocityControl.hal

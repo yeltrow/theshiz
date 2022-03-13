@@ -33,3 +33,5 @@ net mb2hwpanel7 mb2hal.RegIn.07.int
 # Output from linuxcnc to hwpanel (heartbeat, lights)
 net mb2hwpanel9 mb2hal.RegOut.00
 
+# Max Joint Speed from Arduio hwpanel
+net maxVel mb2hal.RegIn.08.int

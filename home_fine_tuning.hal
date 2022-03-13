@@ -26,25 +26,46 @@ setp sum2.5.gain1 -1.0
 setp sum2.6.gain1 -1.0
 setp sum2.7.gain1 -1.0
 
+# Unlink the motion controller from each of the cmd pins.
+unlinkp joint.0.motor-pos-cmd
+unlinkp joint.1.motor-pos-cmd
+unlinkp joint.2.motor-pos-cmd
+
 # ALL THE INPUT NETS TO THESE FUNCTIONS
 # COMMADN FROM CONTROL to OFFSET
-net xpos-cmd-control axis.0.motor-pos-cmd 
-net ypos-cmd-control axis.1.motor-pos-cmd
-net zpos-cmd-control axis.2.motor-pos-cmd
+net xpos-cmd-control joint.0.motor-pos-cmd
+net ypos-cmd-control joint.1.motor-pos-cmd
+net zpos-cmd-control joint.2.motor-pos-cmd
+
+# Unlink the feeback to the join pins in the main ini file.
+unlinkp joint.0.motor-pos-fb
+unlinkp joint.1.motor-pos-fb
+unlinkp joint.2.motor-pos-fb
+
 # FEEDBACK TO control from OFFSET
-net xpos-fb axis.0.motor-pos-fb
-net ypos-fb axis.1.motor-pos-fb
-net zpos-fb axis.2.motor-pos-fb
+net xpos-fb joint.0.motor-pos-fb
+net ypos-fb joint.1.motor-pos-fb
+net zpos-fb joint.2.motor-pos-fb
+
+# Unlink the position feedback from stepgens to the the feedback
+unlinkp hm2_7i76e.0.stepgen.00.position-fb
+unlinkp hm2_7i76e.0.stepgen.01.position-fb
+unlinkp hm2_7i76e.0.stepgen.02.position-fb
 
 # FEEDBACK FROM PID OR STEPGEN to OFFSET 
-net xpos-fb-from-sg stepgen.0.position-fb
-net ypos-fb-from-sg stepgen.1.position-fb 
-net zpos-fb-from-sg stepgen.2.position-fb
+net xpos-fb-from-sg hm2_7i76e.0.stepgen.00.position-fb
+net ypos-fb-from-sg hm2_7i76e.0.stepgen.01.position-fb
+net zpos-fb-from-sg hm2_7i76e.0.stepgen.02.position-fb
+
+# Unlink the inputs to the PIDs so they get the offset command.
+unlinkp pid.x.command
+unlinkp pid.y.command
+unlinkp pid.z.command
 
 # COMMAND FROM OFFSET to STEP GENERATOR OR PID
-net xpos-cmd stepgen.0.position-cmd
-net ypos-cmd stepgen.1.position-cmd
-net zpos-cmd stepgen.2.position-cmd
+net xpos-cmd pid.x.command
+net ypos-cmd pid.y.command
+net zpos-cmd pid.z.command
 
 # Connections for all the sum2 blocks to offset the command by the 
 # 

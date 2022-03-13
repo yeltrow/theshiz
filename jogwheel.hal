@@ -4,10 +4,10 @@
 loadrt logic personality=0x204
 loadrt mux2 names=mux2-jogwheel
 net jogwheel hwpanel.0.jogcounts 
-net jogwheel axis.0.jog-counts
-net jogwheel axis.1.jog-counts
-net jogwheel axis.2.jog-counts
-net jogwheel axis.3.jog-counts
+net jogwheel axis.x.jog-counts
+net jogwheel axis.y.jog-counts
+net jogwheel axis.z.jog-counts
+net jogwheel axis.a.jog-counts
 # Connect the physical buttons to the select-but signals
 net x-jog-select-but hwpanel.0.XBUT
 net y-jog-select-but hwpanel.0.YBUT
@@ -31,14 +31,14 @@ net y-jog-select halui.joint.1.is-selected
 net z-jog-select halui.joint.2.is-selected
 net a-jog-select halui.joint.3.is-selected
 # Connect each axis enable signal to the selector from halui
-net x-jog-select axis.0.jog-enable
-net y-jog-select axis.1.jog-enable
-net z-jog-select axis.2.jog-enable
-net a-jog-select axis.3.jog-enable
-net jog-scale axis.0.jog-scale
-net jog-scale axis.1.jog-scale
-net jog-scale axis.2.jog-scale
-net jog-scale axis.3.jog-scale
+net x-jog-select axis.x.jog-enable
+net y-jog-select axis.y.jog-enable
+net z-jog-select axis.z.jog-enable
+net a-jog-select axis.a.jog-enable
+net jog-scale axis.x.jog-scale
+net jog-scale axis.y.jog-scale
+net jog-scale axis.z.jog-scale
+net jog-scale axis.a.jog-scale
 # add the mux so that the axis select button will cause the jog wheel to move the axis at
 # a fraction of the normal move amount for creeping in while touching off
 # while one is holding the axis select button down.  
@@ -48,10 +48,11 @@ setp mux2-jogwheel.in0 0.0005
 setp mux2-jogwheel.in1 0.00005
 net jog-scale mux2-jogwheel.out 
 net manual-requested  mux2-jogwheel.sel
-setp axis.0.jog-vel-mode 1
-setp axis.1.jog-vel-mode 1
-setp axis.2.jog-vel-mode 1
-setp axis.3.jog-vel-mode 1
+setp axis.x.jog-vel-mode 1
+setp axis.y.jog-vel-mode 1
+setp axis.z.jog-vel-mode 1
+setp axis.a.jog-vel-mode 1
 # add thread to servo thread 
 addf logic.0 servo-thread
 addf mux2-jogwheel servo-thread
+
