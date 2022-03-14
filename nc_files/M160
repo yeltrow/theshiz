@@ -1,0 +1,65 @@
+# M!60
+# Machine must be homed before using!!!!
+# 
+# Perform specialty homing sequence using prox switches to generate 
+# a marker pulse that is bi-directionally sought.
+# This bidirectional seek compensates for temperature drift in the
+# prox switch.
+#
+# Must edit the [AXIS_L] sectiont to include the line
+# 
+# OFFSET_AV_RATIO = 0.1
+# 
+# for each axis with a prox switch to use thi program.
+#
+# 
+# Unlink all of the IO used for prox switchs from the probe-in 
+# net.
+#
+halcmd unlinkp hm2_7i76e.0.7i76.0.0.input-16-not
+
+# Zero out all offsets in the existing G54 coordinate system.
+# Otherwise, all the motion commands will be in terms of some
+# relative coordinates.  We want to be working in absolute machine
+# coordinates.
+# Zero G54
+axis-remote --mdi "G10 L2 P1 X0 Y0 Z0"
+# Change to G54 again
+axis-remote --mdi "G54"
+
+# Set the scale for the joint to something safe
+halcmd setp axis.x.eoffset-scale 0.0001
+
+# Clear the existing offset counts
+halcmd setp axis.x.eoffset-counts 0
+
+# enable the external offset to the x-axis
+halcmd setp axis.x.eoffset-enable 1
+
+# Link the prox switch on the axis to the probe input
+# The inverted signal is used for our NPN proxes. 
+halcmd net probe-in hm2_7i76e.0.7i76.0.0.input-16-not
+# Issue and MDI command to find the prox switch 
+axis-remote --mdi "G38.2 F10 X5.5"
+axis-remote --mdi "#<pos_prox_pos> = #5061"
+#axis-remote --mdi "(DEBUG, #<pos_prox_pos>)"
+# Move to the other side of the handlewheel bolt we are picking up
+axis-remote --mdi "G1 F2 X[#5061 + 0.015]"
+
+# Seek the prox in the other direction
+axis-remote --mdi "G38.2 F2 X5.0"
+axis-remote --mdi "#<neg_prox_pos> = #5061"
+#axis-remote --mdi "(DEBUG, #<neg_prox_pos>)"
+
+axis-remote --mdi "#<avg_prox_pos> = [ [ #<neg_prox_pos> + #<pos_prox_pos> ] / 2 ]"
+axis-remote --mdi "(DEBUG, #<avg_prox_pos>)"
+
+
+sleep 12
+# Unlink the pin now that we are done with it.
+halcmd unlinkp hm2_7i76e.0.7i76.0.0.input-16-not
+
+
+
+
+
