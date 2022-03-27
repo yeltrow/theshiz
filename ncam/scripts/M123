@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+# coding: utf-8
+import gtk
+import os
+import pygtk
+pygtk.require('2.0')
+from gtk import gdk
+
+fname = '/home/wortley/Documents/theshiz/ncam/catalogs/no_skip_dlg.conf'
+if os.path.isfile(fname) :
+    exit(0)
+
+msg = 'Stop LinuxCNC program,&#10;toggle the shown button,&#10;then restart'
+msg1 = 'Skip block not active'
+icon_fname = '/home/wortley/Documents/theshiz/ncam/graphics/skip_block.png'
+
+dlg = gtk.MessageDialog(parent = None, flags = gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, type = gtk.MESSAGE_WARNING, buttons = gtk.BUTTONS_NONE, message_format = msg1)
+
+dlg.set_title('NativeCAM')
+dlg.format_secondary_markup(msg)
+
+dlg.set_image(gtk.Image())
+dlg.get_image().set_from_pixbuf(gdk.pixbuf_new_from_file_at_size(icon_fname, 80, 80))
+
+cb = gtk.CheckButton(label = "Do not show again")
+dlg.get_content_area().pack_start(cb, True, True, 0)
+dlg.add_button(gtk.STOCK_OK, gtk.RESPONSE_OK).grab_focus()
+
+dlg.set_keep_above(True)
+dlg.show_all()
+
+dlg.run()
+if cb.get_active() :
+    open(fname, 'w').close()
+exit(0)

@@ -8,6 +8,8 @@
 # Machine must be homed before using!!!!
 # 
 halcmd unlinkp hm2_7i76e.0.7i76.0.0.input-16-not
+halcmd unlinkp hm2_7i76e.0.7i76.0.0.input-17-not
+halcmd unlinkp hm2_7i76e.0.7i76.0.0.input-18-not
 
 if [[ $1 == "1.000000" ]]
 	then 
@@ -15,3 +17,14 @@ if [[ $1 == "1.000000" ]]
 	halcmd net probe-in hm2_7i76e.0.7i76.0.0.input-16-not
 fi
 
+if [[ $1 == "2.000000" ]]
+	then 
+	echo Selecting Y Prox as Probe Input
+	halcmd net probe-in hm2_7i76e.0.7i76.0.0.input-17-not
+fi
+
+if [[ $1 == "3.000000" ]]
+	then 
+	echo Selecting Z Prox as Probe Input
+	halcmd net probe-in hm2_7i76e.0.7i76.0.0.input-18-not
+fi

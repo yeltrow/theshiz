@@ -9,13 +9,6 @@ DEBUG = 0
 VERSION = 1.1
 
 [DISPLAY]
-# required NativeCAM item :
-NCAM_DIR = ncam
-
-# required NativeCAM item :
-EMBED_TAB_NAME = NativeCAM
-EMBED_TAB_COMMAND = gladevcp -x {XID} -U --catalog=mill /usr/share/linuxcnc/aux_gladevcp/NativeCAM/ncam.ui
-
 DISPLAY = axis
 POSITION_OFFSET = RELATIVE
 POSITION_FEEDBACK = ACTUAL
@@ -24,9 +17,7 @@ MAX_SPINDLE_OVERRIDE = 2.000000
 MIN_SPINDLE_OVERRIDE = 0.500000
 INTRO_GRAPHIC = linuxcnc.gif
 INTRO_TIME = 5
-# required NativeCAM item :
-PROGRAM_PREFIX = ncam/scripts/
-
+PROGRAM_PREFIX = /home/wortley/linuxcnc/nc_files
 INCREMENTS = .1in .05in .01in .005in .001in .0005in .0001in
 PYVCP = custompanel.xml
 POSITION_FEEDBACK = ACTUAL
@@ -53,9 +44,7 @@ CYCLE_TIME = 0.010
 
 [RS274NGC]
 PARAMETER_FILE = linuxcnc.var
-# required NativeCAM item :
-SUBROUTINE_PATH = ncam/my-stuff:ncam/lib/mill:ncam/lib/utilities:~/Documents/jobs/:~/Documents/irontools/ncfiles/:~/Documents/theshiz/nc_files/
-
+SUBROUTINE_PATH = ~/Documents/jobs/:~/Documents/irontools/ncfiles/:~/Documents/theshiz/nc_files/
 USER_M_PATH = ~/Documents/irontools/ncfiles/:~/Documents/theshiz/nc_files/
 
 [EMCMOT]
@@ -240,7 +229,7 @@ HOME_OFFSET = 0.0000000
 HOME_SEARCH_VEL = 0.3
 HOME_LATCH_VEL = -0.010000
 HOME_FINAL_VEL = 0.1
-HOME = -0.159
+HOME = -0.192
 HOME_USE_INDEX = NO
 HOME_IGNORE_LIMITS = YES
 HOME_SEQUENCE = 1

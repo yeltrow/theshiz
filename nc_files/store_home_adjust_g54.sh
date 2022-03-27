@@ -32,7 +32,12 @@ axis-remote --mdi "G43"
 axis-remote --mdi "G28.1"
 # Set the G54 work offset (P1) to the measured position of the 
 # homing sequence in G54.  
-axis-remote --mdi "G10 L20 P1 X-0.245 Y11.3655 Z1.6154"
+#axis-remote --mdi "G10 L20 P1 X-0.245 Y11.3655 Z1.6154"
+#2022-03-16
+axis-remote --mdi "G54"
+axis-remote --mdi "M61 Q0"
+axis-remote --mdi "G43"
+axis-remote --mdi "G10 L20 P1 X-0.245 Y11.3658 Z1.6147"
 
  
 
