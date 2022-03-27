@@ -1,0 +1,37 @@
+
+loadrt wcomp names=comp_x,comp_y,comp_z
+
+# Unlink hal pins used for REAL home/limit switches
+unlinkp hm2_7i76e.0.7i76.0.0.input-01-not
+unlinkp hm2_7i76e.0.7i76.0.0.input-04-not
+unlinkp hm2_7i76e.0.7i76.0.0.input-06-not
+
+unlinkp hm2_7i76e.0.7i76.0.0.input-02-not
+unlinkp hm2_7i76e.0.7i76.0.0.input-03-not
+unlinkp hm2_7i76e.0.7i76.0.0.input-05-not
+
+sets max-x 0
+sets min-y 0
+sets min-z 0 
+
+setp comp_x.max -0.5
+setp comp_x.min -1.0
+
+setp comp_y.max 0.5
+setp comp_y.min 0.0
+
+setp comp_z.max 0.5
+setp comp_z.min 0.0
+
+net x-pos-cmd => comp_x.in
+net y-pos-cmd => comp_y.in
+net z-pos-cmd => comp_z.in
+
+net min-home-x <= comp_x.out
+net max-home-y <= comp_y.out 
+net max-home-z <= comp_z.out
+
+addf comp_x servo-thread
+addf comp_y servo-thread
+addf comp_z servo-thread
+

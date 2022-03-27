@@ -5,40 +5,14 @@
 # LOAD REALTIME COMPONENTS
 loadrt trivkins
 loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[TRAJ]AXES
-#loadrt probe_parport NOT NEEDED FOR linuxcnc 2.7
-loadrt hal_parport cfg="0xe880 out"
-setp parport.0.reset-time 5000
-loadrt stepgen step_type=0,0,0,0
-loadrt abs count=1
-loadrt sum2 count=8
-loadrt charge_pump
-loadrt fuji_frenic_vfd
-loadrt hwpanel
-loadrt watchdog num_inputs=1
-loadrt not names=not-estop,not-watchdogok
-loadrt knob2float
-loadrt debounce cfg=1
-loadrt message names=msgwatchdog messages="Button_Control_Panel_Watchdog_Timout "
-loadrt mux4 names=mux4-spindle-cmd
 
-# Add a comparator component for the oiler
+loadrt stepgen step_type=0,0,0,0
 
 # LOAD USERSPACE COMPONENTES
-loadusr -W mb2hal config=mb2hal.ini
-loadusr -W ./oilerctl
 
 # ADD FUNCTIONS TO BASE THREAD 
-addf parport.0.read base-thread
-#Commented out below because we are running one port now
-#addf parport.1.read base-thread 
-addf debounce.0 base-thread
+
 addf stepgen.make-pulses base-thread
-addf charge-pump base-thread
-addf parport.0.write base-thread
-#MRW removed below because we are going to use the base period
-#to drive the steppers.  It should be fast enough.
-#addf parport.0.reset base-thread
-#addf parport.1.write base-thread
 
 # ADD FUNTIONS TO SERVO THREAD
 
@@ -46,64 +20,18 @@ addf stepgen.capture-position servo-thread
 addf motion-command-handler servo-thread
 addf motion-controller servo-thread
 addf stepgen.update-freq servo-thread
-addf abs.0 servo-thread
-addf fuji-frenic-vfd.0 servo-thread
-addf hwpanel.0 servo-thread
-addf watchdog.set-timeouts servo-thread
-addf watchdog.process servo-thread
-addf not-estop servo-thread
-addf not-watchdogok servo-thread
-addf msgwatchdog servo-thread
-addf mux4-spindle-cmd servo-thread
-addf sum2.0 servo-thread
-addf sum2.1 servo-thread
-addf sum2.2 servo-thread
-addf sum2.3 servo-thread
-addf sum2.4 servo-thread
-addf sum2.5 servo-thread
-addf sum2.6 servo-thread
-addf sum2.7 servo-thread
-# CONNECTIONS TO NETS
 
-net xstep => parport.0.pin-02-out
-setp parport.0.pin-02-out-invert 1
-net xdir => parport.0.pin-03-out
-setp parport.0.pin-03-out-invert 1
-net ystep => parport.0.pin-04-out
-setp parport.0.pin-04-out-invert 1
-net ydir => parport.0.pin-05-out
-setp parport.0.pin-05-out-invert 1
-net zstep => parport.0.pin-06-out
-setp parport.0.pin-06-out-invert 1
-net zdir => parport.0.pin-07-out
-#setp parport.0.pin-07-out-invert 1
-net astep => parport.0.pin-08-out
-setp parport.0.pin-08-out-invert 1
-net adir => parport.0.pin-09-out
+
+
+# CONNECTIONS TO NETS
 
 # HOMING SWITCHES
 
 net x-home-sw axis.0.home-sw-in
-net x-home-sw parport.0.pin-11-in
 net y-home-sw axis.1.home-sw-in
-net y-home-sw parport.0.pin-12-in
 net z-home-sw axis.2.home-sw-in
-net z-home-sw parport.0.pin-13-in
 
-
-# Oiler - The rest is in the custom_postgui.hal because
-# we need time for the userspace components to load
-#
-net moving <= motion.current-vel
-
-net charge-pump => parport.0.pin-17-out
-# From estop circuit 5V = estop satisfied, relay closed, ready for motion
-setp debounce.0.delay 5
-net estop-relay-closed <= debounce.0.0.out
-net estop-relay-closed-raw <= parport.0.pin-15-in
-net estop-relay-closed-raw => debounce.0.0.in
-net estopreset => parport.0.pin-14-out
-net estopreset => fuji-frenic-vfd.0.resetCmd
+# X-Axis
 
 setp stepgen.0.position-scale [AXIS_0]SCALE
 setp stepgen.0.steplen 20000
@@ -111,28 +39,15 @@ setp stepgen.0.stepspace 20000
 setp stepgen.0.dirhold 35000
 setp stepgen.0.dirsetup 35000
 setp stepgen.0.maxaccel [AXIS_0]STEPGEN_MAXACCEL
-setp sum2.4.gain1 -1.0
-setp sum2.5.gain1 -1.0
-setp sum2.6.gain1 -1.0
-setp sum2.7.gain1 -1.0
 
-# MRW Below is the command without intervention
 #net xpos-cmd axis.0.motor-pos-cmd => stepgen.0.position-cmd
-# MRW This is the command with manual intervention
-net xpos-cmd-control axis.0.motor-pos-cmd => sum2.0.in0
-net xpos-ring-reading sum2.0.in1 
-net xpos-cmd sum2.0.out  => stepgen.0.position-cmd
-
-# MRW No intervention
 #net xpos-fb stepgen.0.position-fb => axis.0.motor-pos-fb
-# MRW with feeback side intervention
-net xpos-fb-from-sg stepgen.0.position-fb => sum2.4.in0 
-net xpos-ring-reading sum2.4.in1
-net xpos-fb sum2.4.out => axis.0.motor-pos-fb
 
 net xstep <= stepgen.0.step
 net xdir <= stepgen.0.dir
 net xenable axis.0.amp-enable-out => stepgen.0.enable
+
+# Y-Axis 
 
 setp stepgen.1.position-scale [AXIS_1]SCALE
 setp stepgen.1.steplen 20000 
@@ -141,16 +56,8 @@ setp stepgen.1.dirhold 35000
 setp stepgen.1.dirsetup 35000
 setp stepgen.1.maxaccel [AXIS_1]STEPGEN_MAXACCEL
 
-# Original Y Axis Config without handwheel ring reading
 #net ypos-cmd axis.1.motor-pos-cmd => stepgen.1.position-cmd
 #net ypos-fb stepgen.1.position-fb => axis.1.motor-pos-fb
-
-net ypos-fb-from-sg stepgen.1.position-fb => sum2.5.in0 
-net ypos-ring-reading sum2.5.in1
-net ypos-fb sum2.5.out => axis.1.motor-pos-fb
-net ypos-cmd-control axis.1.motor-pos-cmd => sum2.1.in0
-net ypos-ring-reading sum2.1.in1 
-net ypos-cmd sum2.1.out  => stepgen.1.position-cmd
 
 net ystep <= stepgen.1.step
 net ydir <= stepgen.1.dir
@@ -163,21 +70,16 @@ setp stepgen.2.dirhold 35000
 setp stepgen.2.dirsetup 35000
 setp stepgen.2.maxaccel [AXIS_2]STEPGEN_MAXACCEL
 
+# Z-Axis 
 
-# Z-Axis Ring Reading 
 #net zpos-cmd axis.2.motor-pos-cmd => stepgen.2.position-cmd
 #net zpos-fb stepgen.2.position-fb => axis.2.motor-pos-fb
-
-net zpos-fb-from-sg stepgen.2.position-fb => sum2.6.in0 
-net zpos-ring-reading sum2.6.in1
-net zpos-fb sum2.6.out => axis.2.motor-pos-fb
-net zpos-cmd-control axis.2.motor-pos-cmd => sum2.2.in0
-net zpos-ring-reading sum2.2.in1 
-net zpos-cmd sum2.2.out  => stepgen.2.position-cmd
 
 net zstep <= stepgen.2.step
 net zdir <= stepgen.2.dir
 net zenable axis.2.amp-enable-out => stepgen.2.enable
+
+# A-Axis
 
 setp stepgen.3.position-scale [AXIS_3]SCALE
 setp stepgen.3.steplen 1
@@ -185,100 +87,12 @@ setp stepgen.3.stepspace 0
 setp stepgen.3.dirhold 35000
 setp stepgen.3.dirsetup 35000
 setp stepgen.3.maxaccel [AXIS_3]STEPGEN_MAXACCEL
+
 net apos-cmd axis.3.motor-pos-cmd => stepgen.3.position-cmd
 net apos-fb stepgen.3.position-fb => axis.3.motor-pos-fb
 net astep <= stepgen.3.step
 net adir <= stepgen.3.dir
 net aenable axis.3.amp-enable-out => stepgen.3.enable
-
-# SPINDLE
-
-setp halui.spindle-override.scale 0.005
-net program-spindle-cmd <= motion.spindle-speed-out-abs
-net program-spindle-cmd mux4-spindle-cmd.in0
-net vcp-spindle-cmd mux4-spindle-cmd.in1
-net spindle-cmd mux4-spindle-cmd.out
-
-net spindle-at-speed => motion.spindle-at-speed
-net spindle-cmd => fuji-frenic-vfd.0.desiredRPM
-net spindle-mbcmd fuji-frenic-vfd.0.speedReg => mb2hal.node1.vfd.speedCmd.00
-net vfdOperCmd <= fuji-frenic-vfd.0.operReg => mb2hal.node1.vfdOperCmd.00
-net spindle-fwd motion.spindle-forward => fuji-frenic-vfd.0.fwdCmd
-net spindle-rev motion.spindle-reverse => fuji-frenic-vfd.0.revCmd
-net variator-setting => fuji-frenic-vfd.0.nominalRPM
-
-net hal2vfdstatus mb2hal.node1.vfdOperStatus.00.int 
-net hal2vfdstatus fuji-frenic-vfd.0.vfdOperStateReg
-
-# HARDWARE BUTTON PANEL
-
-net mb2hwpanel0 mb2hal.RegIn.00.int => hwpanel.0.reg0
-net mb2hwpanel1 mb2hal.RegIn.01.int => hwpanel.0.reg1
-net mb2hwpanel2 mb2hal.RegIn.02.int => hwpanel.0.reg2
-net mb2hwpanel3 mb2hal.RegIn.03.int => hwpanel.0.reg3
-net mb2hwpanel4 mb2hal.RegIn.04.int => hwpanel.0.reg4
-net mb2hwpanel5 mb2hal.RegIn.05.int => hwpanel.0.reg5
-net mb2hwpanel6 mb2hal.RegIn.06.int => hwpanel.0.reg6
-net mb2hwpanel7 mb2hal.RegIn.07.int => hwpanel.0.reg7
-
-# HARDWARE BUTTON PANEL RUN BUTTON
-net run-button <= hwpanel.0.RUN
-net run-button => halui.program.run
-net run-button => halui.mode.auto 
-
-# HARDWARE PANEL SPINDLE SWITCH
-net spindle-on-sw <= hwpanel.0.SPINDLEON
-net spindle-off-sw <= hwpanel.0.SPINDLEOFF
-net spindle-on-sw => mux4-spindle-cmd.sel0
-net spindle-off-sw => mux4-spindle-cmd.sel1
-
-net spindle-on-sw => halui.spindle.start
-net spindle-off-sw => halui.spindle.stop
-
-# Feed override knob
-net focounts hwpanel.0.feedcounts halui.feed-override.counts
-setp halui.feed-override.scale .01
-setp halui.feed-override.count-enable 1
-
-# Spindle Override Knob
-
-net spindle-knob-counts <= hwpanel.0.spindlecounts
-net spindle-knob-counts => halui.spindle-override.counts
-
-# JOGWHEEL
-source jogwheel.hal
- 
-# MAX VELOCITY KNOB
-source maxVelocityControl.hal
-
-# HARDWARE BUTTON PANEL WATCHDOG
-setp msgwatchdog.edge 0
-setp watchdog.timeout-0 0.600
-
-net hwpanel-heartbeat hwpanel.0.HEARTBEAT watchdog.input-0
-net msg-hw-panel-wd watchdog.ok-out msgwatchdog.trigger
-net estopreset not-estop.in
-net estopreset-not not-estop.out watchdog.enable-in
-net mb2hwpanel9 hwpanel.0.reg9 => mb2hal.RegOut.00
-net msg-hw-panel-wd not-watchdogok.in
-net watchdogfault not-watchdogok.out => halui.machine.off
-# button NONE has been repurposed to do a rapid to the tool change Z0 position
-net rapid-to-tool-change-pos hwpanel.0.NONEBUT
-# MDI Command G0 G53 Z0 Machine coordinate move G53
-net rapid-to-tool-change-pos halui.mdi-command-00
-
-# EMC is running and is not estopped, we enable the hardware estop system to perform its
-# work.  Estop reset is performed via the soft button on the user interface
-# Feedback to lcnc is performed via a hardware pin from the relay.
-net estop-out charge-pump.enable iocontrol.0.user-enable-out
-net charge-pump <= charge-pump.out
-# We want to request a reset relay pulse from the HMI to the estop hardare
-# it will only "stick" if the estop relay pulls in and stays.
-# iocontrol.0.user-request-enable: (Bit, Out) TRUE when the user has requested that estop be cleared
-# 100ms long pulse is created by linuxcnc.
-net estopreset <=  iocontrol.0.user-request-enable 
-# iocontrol.0.emc-enable-in: Should be driven FALSE when an external estop condition exists.
-net estop-relay-closed => iocontrol.0.emc-enable-in
 
 loadusr -W hal_manualtoolchange
 net tool-change iocontrol.0.tool-change => hal_manualtoolchange.change
@@ -286,7 +100,3 @@ net tool-changed iocontrol.0.tool-changed <= hal_manualtoolchange.changed
 net tool-number iocontrol.0.tool-prep-number => hal_manualtoolchange.number
 net tool-prepare-loopback iocontrol.0.tool-prepare => iocontrol.0.tool-prepared
 
-# Tool Change Routines to add to the Main HAL file
-net tool-change-button halui.mdi-command-01
-net next-tool motion.analog-in-00
-net now-tool iocontrol.0.tool-number

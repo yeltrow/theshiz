@@ -1,0 +1,109 @@
+# home_fine_tuning.hal
+#
+# This file inserts an offset between the motion planner and the
+# axes they command.
+# It also inserts an offset between the feedback values and the
+# feedback pins to compensate 
+# This is used to line up the zero mark on the handwheels after 
+# homing to switches in increase accuracy.
+#
+
+loadrt sum2 count=8
+
+addf sum2.0 servo-thread
+addf sum2.1 servo-thread
+addf sum2.2 servo-thread
+addf sum2.3 servo-thread
+addf sum2.4 servo-thread
+addf sum2.5 servo-thread
+addf sum2.6 servo-thread
+addf sum2.7 servo-thread
+
+# Gain on feedback channel is set
+# to subtract the offset
+setp sum2.4.gain1 -1.0
+setp sum2.5.gain1 -1.0
+setp sum2.6.gain1 -1.0
+setp sum2.7.gain1 -1.0
+
+# Unlink the motion controller from each of the cmd pins.
+unlinkp joint.0.motor-pos-cmd
+unlinkp joint.1.motor-pos-cmd
+unlinkp joint.2.motor-pos-cmd
+
+# ALL THE INPUT NETS TO THESE FUNCTIONS
+# COMMADN FROM CONTROL to OFFSET
+net xpos-cmd-control joint.0.motor-pos-cmd
+net ypos-cmd-control joint.1.motor-pos-cmd
+net zpos-cmd-control joint.2.motor-pos-cmd
+
+# Unlink the feeback to the join pins in the main ini file.
+unlinkp joint.0.motor-pos-fb
+unlinkp joint.1.motor-pos-fb
+unlinkp joint.2.motor-pos-fb
+
+# FEEDBACK TO control from OFFSET
+net xpos-fb joint.0.motor-pos-fb
+net ypos-fb joint.1.motor-pos-fb
+net zpos-fb joint.2.motor-pos-fb
+
+# Unlink the position feedback from stepgens to the the feedback
+unlinkp hm2_7i76e.0.stepgen.00.position-fb
+unlinkp hm2_7i76e.0.stepgen.01.position-fb
+unlinkp hm2_7i76e.0.stepgen.02.position-fb
+
+# FEEDBACK FROM PID OR STEPGEN to OFFSET 
+net xpos-fb-from-sg hm2_7i76e.0.stepgen.00.position-fb
+net ypos-fb-from-sg hm2_7i76e.0.stepgen.01.position-fb
+net zpos-fb-from-sg hm2_7i76e.0.stepgen.02.position-fb
+
+# Unlink the inputs to the PIDs so they get the offset command.
+unlinkp pid.x.command
+unlinkp pid.y.command
+unlinkp pid.z.command
+
+# COMMAND FROM OFFSET to STEP GENERATOR OR PID
+net xpos-cmd pid.x.command
+net ypos-cmd pid.y.command
+net zpos-cmd pid.z.command
+
+# Connections for all the sum2 blocks to offset the command by the 
+# 
+# X-Axis 
+
+# command side intervention
+net xpos-cmd-control sum2.0.in0
+net xpos-ring-reading sum2.0.in1 
+net xpos-cmd sum2.0.out
+
+# feeback side intervention
+net xpos-fb-from-sg sum2.4.in0  
+net xpos-ring-reading sum2.4.in1
+net xpos-fb sum2.4.out 
+
+# Y-Axis 
+
+# command side intervention
+net ypos-cmd-control sum2.1.in0
+net ypos-ring-reading sum2.1.in1 
+net ypos-cmd sum2.1.out  
+
+# feeback side intervention
+net ypos-fb-from-sg sum2.5.in0 
+net ypos-ring-reading sum2.5.in1
+net ypos-fb sum2.5.out
+
+# Z-Axis 
+
+# command side intervention
+net zpos-cmd-control sum2.2.in0
+net zpos-ring-reading sum2.2.in1 
+net zpos-cmd sum2.2.out
+
+# feeback side intervention
+net zpos-fb-from-sg sum2.6.in0 
+net zpos-ring-reading sum2.6.in1
+net zpos-fb sum2.6.out
+
+
+

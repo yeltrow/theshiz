@@ -5,28 +5,15 @@
 # **** Use COMMANDED spindle velocity from LinuxCNC because no spindle encoder was specified
 # **** COMANDED velocity is signed so we use absolute component (abs.0) to remove sign
 
-net spindle-cmd => abs.0.in
-net absolute-spindle-vel <= abs.0.out => pyvcp.spindle-speed
+net absolute-spindle-vel => pyvcp.spindle-speed
 
 # **** force spindle at speed indicator true because we have no feedback ****
 
 net vcp-spindle-cmd <= pyvcp.spindle-setting-f
-sets spindle-at-speed true
+#sets spindle-at-speed true
 net variator-setting <= pyvcp.variator-setting-f
 
-net hwpause hwpanel.0.FEEDHOLD => halui.program.pause
-net hwstep hwpanel.0.STEP => halui.program.step
-net hwrun hwpanel.0.PAUSE => halui.program.resume
-net hwstop hwpanel.0.STOP => halui.program.stop
 net hwpanel-heartbeat pyvcp.heartbeat-indicator-led
-
-
-
-net moving => oilerctl.velocity
-setp oilerctl.offseconds 1350
-setp oilerctl.onseconds 1350
-setp oilerctl.debounceseconds 60
-net pumpon oilerctl.oiler-cmd => parport.0.pin-16-out
 
 #define STEP 27
 #define RUN 28
@@ -53,6 +40,11 @@ net pumpon oilerctl.oiler-cmd => parport.0.pin-16-out
 net now-tool pyvcp.tool-now
 net next-tool pyvcp.tool-number
 net tool-change-button pyvcp.force-tool-change
+
+# IO Connections for manual tool change buttons.
+net tool-change-button halui.mdi-command-01
+net next-tool motion.analog-in-00
+net now-tool iocontrol.0.tool-number
 
 # PYVCP Ring Reading Axis Offset
 net xpos-ring-reading pyvcp.x-ring-reading

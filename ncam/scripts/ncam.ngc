@@ -4,8 +4,8 @@
 (visit https://forum.linuxcnc.org/forum/20-g-code/30840-new-syntax-highlighting-for-gedit)
 (or https://github.com/FernV/Gcode-highlight-for-Kate)
 
-G17 G40 G49 G90 G92.1 G94 G54 G64 p0.001
 G20  (imperial/inches)
+G17 G40 G49 G90 G92.1 G94 G54 G64 p0.001
 
 
 #<center_drill_depth>       = -0.125
@@ -37,6 +37,7 @@ G20  (imperial/inches)
 #<_probe_tip_dia>           = 0.125
 
 #<_probe_tool_len_comp>     = 1
+#<probe_height>             = 0
 #<_tool_probe_z>            = 0.0
 
 #<_off_rot_coord_system>    = 57
@@ -55,1061 +56,98 @@ G20  (imperial/inches)
 
 (end defaults)
 
-(next values for backward compatibility only)
-#<_units_radius>            = 1  (factor for radius and diameter)
-#<_units_width>             = 1  (factor for width, height, length)
-#<_units_cut_depth>         = 1  (factor for depth)
+#<_units_radius>            = 1  (for backward compatibility)
+#<_units_width>             = 1  (for backward compatibility)
+#<_units_cut_depth>         = 1  (for backward compatibility)
+
 #<_tool_dynamic_dia>        = 0.0
 
 (This is a built-in safety to help avoid gouging into your work piece)
 / o<safety_999> if [#<_show_final_cuts>]
 /    o<safety_9999> repeat [1000]
+/       M123
 /       M0
 /    o<safety_9999> endrepeat
 / o<safety_999> endif
+
 
 (sub definitions)
 (end sub definitions)
 
 
-( SETUP: )
-( Touch off mill table as -0.75" for 0.750" thick blanks. )
-( Touch off mill table as -1.00" for 1.00" thick blanks. )
-( Touch off YMAX edge of barstock as Y=0 - Bar will be in negative Y )
-( Touch off XMIN edge of stock as 0.  Bar will be in positive X )
-( Use virtual point of spot drill as z0 for the tool.  Physical point will be )
-( higher. )
-( 0.25" Mill will be touched off flush. )
-( Threadmill 0.290 will be touched off flush of its end. )
-( Spotting Drill Speed 2000RPM )
-( Carbide Milling Speed 3800RPM )
-
-
-(begin GCode)
-(custom gcode lines author : Fernand Veilleux)
-
-o<g-code_001_active> if [1]
-
-	#<ironheight> = 4
-	#<ironwidth> = 2
-	#<iron_margin> = 0.125
-	#<iron_count> = 9
-	#<iron_thickness> = 0.75
-	#<iron_rotation> = 90
-
-o<g-code_001_active> endif
-(end GCode)
-
-
-(begin GCode)
-(custom gcode lines author : Fernand Veilleux)
-
-o<g-code_002_active> if [1]
-
-	#<ic> = #<iron_count>
-	#<ball_depth_03125> = -0.181
-	#<ball_depth_01875> = -.092
-	o<set_ball_circle> if [#<ironheight> GT 1 ]
-	   #<ball_circle_dia> = 0.9
-	   #<ball_depth> = -0.375
-	(was 1.5, 3.5)
-	   #<block_cl_x> = 2
-	   #<block_cl_y> = 5
-	o<set_ball_circle> else
-	   #<ball_circle_dia> = 0.667
-	   #<ball_depth> = -0.070
-	   #<block_cl_x> = 0.6
-	   #<block_cl_y> = 0.6
-	o<set_ball_circle> endif
-	#<cutmarkoffset> = 0.7706
-
-o<g-code_002_active> endif
-(end GCode)
-
-
 (begin Workpiece)
 (workpiece definition author : Fernand Veilleux)
-#<wp_width>         = [#<_units_width> * [-#<ironheight>]]
-#<wp_length>        = [#<_units_width> * [[#<ironwidth> + #<iron_margin>] * #<iron_count>]]
-#<wp_depth>         = [#<_units_width> * #<iron_thickness>]
-#<wp_wall>          = [#<_units_width> * 0.0]
-#<wp_corner_radius> = [#<_units_width> * 0.0]
+
+#<wp_width>         = [2.000000]
+#<wp_length>        = [4.000000]
+#<wp_depth>         = [1.000000]
+#<wp_wall>          = [0.000000]
+#<wp_corner_radius> = [0.000000]
 #<wp_inside_width>  = [#<wp_width> - #<wp_wall> * 2]
 #<wp_inside_length> = [#<wp_length> - #<wp_wall> * 2]
 
-#<wp_x> = 0.0
-#<wp_y> = 0.0
+#<wp_x> = 0.000000
+#<wp_y> = 0.000000
 
-o<select> CALL [31] [0] [0.0] [0.0 - #<wp_length> / 2] [0.0 - #<wp_length>]
+o<select> CALL [31] [0] [0.000000] [0.000000 - #<wp_length> / 2] [0.000000 - #<wp_length>]
 #<wp_left>  = #31
 #<wp_right> = [#<wp_left> + #<wp_length>]
 
-o<select> CALL [31] [2] [0.0 - #<wp_width>] [0.0 - #<wp_width> / 2] [0.0]
+o<select> CALL [31] [2] [0.000000 - #<wp_width>] [0.000000 - #<wp_width> / 2] [0.000000]
 #<wp_front> = #31
 #<wp_rear>  = [#<wp_front> + #<wp_width>]
 
-o<select> CALL [31] [0] [0.0] [0.0 + #<wp_depth> / 2] [0.0 + #<wp_depth>]
+o<select> CALL [31] [0] [0.000000] [0.000000 + #<wp_depth> / 2] [0.000000 + #<wp_depth>]
 #<surface>  = #31
 
-#<_z_clear>       = 0.1
-#<_rapid_z>       = [#<surface> + #<_z_clear> + 0.4]
+#<_z_clear>       = 0.100000
+#<_rapid_z>       = [#<surface> + #<_z_clear> + 0.400000]
 
 #<bottom>         = [#<surface> - #<wp_depth>]
-#<bottom_through> = [#<bottom> + -0.06]
+#<bottom_through> = [#<bottom> + -0.050000]
 
-/	o<workpiece_001_active> if [1] (show enabled)
+/	o<workpiece_001_active> if [1 AND #<_show_final_cuts>] (show active)
 /		o<stock> CALL [#<wp_left>] [#<wp_right>] [#<wp_front>] [#<wp_rear>] [#<surface>] [#<bottom>] [0] [#<wp_corner_radius>] [#<wp_wall>]
-/		G0 X0.0 Y0.0 Z#<surface>
+/		G0 X0.000000 Y0.000000 Z#<surface>
 /	o<workpiece_001_active> endif
+
 (end Workpiece)
 
 
-(begin All Cutting)
-(regular group authors : Nick Drobchenko and Fernand Veilleux)
-o<group_014_active> if [1]
-
-	(begin All Cutting items)
-
-
-		(begin ALL SPOT DRILLS)
-		(regular group authors : Nick Drobchenko and Fernand Veilleux)
-		o<group_020_active> if [1]
-		
-			(begin ALL SPOT DRILLS items)
-
-
-				(begin Tool Change)
-				(tool change params and changing code author : Fernand Veilleux)
-				
-				#<_drill_feed>       =  5.0
-				#<_drill_retract>    =  0.02
-				#<_drill_mode>       =  82
-				#<_drill_dwell>      =  0.3
-				#<_drill_q>          =  0.05
-				#<_drill_rpm>        =  1000
-				#<_spindle_dir>      =  3
-				#<_cooling_mode>     =  8
-				
-				#<_feed_normal>      =  5.0
-				#<_rpm_normal>       =  1000
-				#<_feed_vertical>    =  5.0
-				#<_penetration_mode> =  0
-				#<_depth_step>       =  -0.01
-				#<_ramp_down_ratio>  = [25 / 100]
-				#<_tool_usage>       =  3
-				#<_stepover_min>     =  0.015
-				#<_stepover_normal>  = [60 / 100]
-				#<_thread_cut_depth> =  0.2
-				#<_thread_cut_teeth> =  1
-				#<_thread_lead_in>   =  0.040
-				#<_tool_dynamic_dia> =  0.0
-				
-				o<tool_change_014_usage> if [#<_tool_usage> EQ 3]
-					o<select> CALL [31] [0] [0.001] [0.3125] [0.2362] [0.1285] [0.257] [0]
-					#<drill_diameter> = #31
-					o<tool_change_014_metric> if [[#<_metric> EQ 1] AND [0 NE 0]]
-						#<drill_diameter> = [#<drill_diameter> * 25.4]
-					o<tool_change_014_metric> endif
-				
-					#<drill_point_len> = [[#<drill_diameter> / 2] / TAN[118 / 2]]
-					(print,Drill info : diameter = #<drill_diameter>, point angle = 118 &#176;, point length = #<drill_point_len>)
-				o<tool_change_014_usage> endif
-				
-				o<tool_change_014_act> if [0 AND [15 NE #5400]]
-					M9
-					T15 M6
-				o<tool_change_014_act> endif
-				
-				o<tool_change_014_lc> if [1 GE 1]
-					G43 H15
-				o<tool_change_014_lc> endif
-				
-				o<tool_change_014_01> if [#<_spindle_dir> GT 0]
-					o<tool_change_014_02> if [3 EQ 3]
-						o<set_spindle_rpm> CALL [#<_drill_rpm>]
-						F#<_drill_feed>
-					o<tool_change_014_02> else
-						o<set_feed_rate_and_speed> CALL [1]
-					o<tool_change_014_02> endif
-				
-				o<tool_change_014_01> endif
-				(end Tool Change)
-
-
-				(begin Drill/Reamer Change)
-				(drill change params and changing code author : Fernand Veilleux)
-				
-				#<_drill_feed>       =  6.0
-				#<_drill_retract>    =  0.02
-				#<_drill_mode>       =  82
-				#<_drill_dwell>      =  0.4
-				#<_drill_q>          =  0.2
-				#<_drill_rpm>        =  2000
-				#<_spindle_dir>      =  3
-				#<_cooling_mode>     =  8
-				
-				#<_rpm_normal>       =  2000
-				#<_feed_vertical>    =  6.0
-				#<_tool_usage>       =  3
-				
-				o<select> CALL [31] [0] [0.001] [0.3125] [0.2362] [0.1285] [0.257] [0]
-				#<drill_diameter> = #31
-				o<drill_chng_006_metric> if [[#<_metric> EQ 1] AND [0 NE 0]]
-					#<drill_diameter> = [#<drill_diameter> * 25.4]
-				o<drill_chng_006_metric> endif
-				
-				#<drill_point_len> = [[#<drill_diameter> / 2] / TAN[90 / 2]]
-				(print,Drill info : diameter = #<drill_diameter>, point angle = 90 &#176;, point length = #<drill_point_len>)
-				
-				o<drill_chng_006_tlc> if [[1 EQ 3] AND [15 GT 0]]
-					M61 Q15
-				o<drill_chng_006_tlc> endif
-				
-				o<drill_chng_006_act> if [1 AND [15 NE #5400]]
-					M9
-					T15 M6
-				o<drill_chng_006_act> endif
-				
-				o<drill_chng_006_lc> if [[1 EQ 1] OR [1 EQ 2]]
-					G43 H15
-				o<drill_chng_006_lc> endif
-				
-				o<drill_chng_006_01> if [[#<_spindle_dir> GT 0] AND #<_spindle_all_time>]
-					o<set_spindle_rpm> CALL [#<_drill_rpm>]
-					F#<_drill_feed>
-				o<drill_chng_006_01> endif
-				(end Drill/Reamer Change)
-
-
-				(begin Drill Single)
-				(drill a single hole author : Fernand Veilleux)
-				
-				o<drill-one_037_active> if [1 AND [#<_tool_usage> EQ 3]] (if active)
-					o<select> CALL [31] [1] [0.1] [#<surface>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-					o<select> CALL [32] [0] [-0.035] [#<bottom_through>] [#<surface> + #<center_drill_depth>] [#<bottom>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-				
-					o<set_spindle_rpm> CALL [#<_drill_rpm>] [#<_drill_feed>]
-				
-					o<drill_single> CALL [0] [[[#<wp_width>/2]]] [#31] [#32] [#<drill_diameter>] [#<drill_point_len>] [1]
-				
-					o<drill-one_037_stop> if [#<_spindle_all_time> EQ 0]
-						M9 M5
-					o<drill-one_037_stop> endif
-				
-				o<drill-one_037_active> endif
-				(end Drill Single)
-
-
-				(begin Center_Drills)
-				(rectangular array author : Fernand Veilleux)
-				
-				o<rect-array_007_active> if [1]
-					o<select> CALL [31] [0] [[[[#<ironwidth> + #<iron_margin>]]/2]] [[[[#<ironwidth> + #<iron_margin>]]/2] - [#<ic> - 1] * [#<ironwidth> + #<iron_margin>] / 2] [[[[#<ironwidth> + #<iron_margin>]]/2] - [#<ic> - 1] * [#<ironwidth> + #<iron_margin>]]
-					#<first_x30> = #31
-				
-					o<select> CALL [31] [0] [[#<wp_width> / 2] - [1 - 1] * [#<ironwidth> + #<iron_margin>]] [[#<wp_width> / 2] - [1 - 1] * [#<ironwidth> + #<iron_margin>] / 2] [[#<wp_width> / 2]]
-					#<first_y30> = #31
-				
-					(get and save current coords system offsets)
-					#<old_coord_system30> = [#<_coord_system> / 10]
-					o<get_offsets> CALL
-					#<offset_x30> = #<_offsets_x>
-					#<offset_y30> = #<_offsets_y>
-					#<offset_z30> = #<_offsets_z>
-					#<offset_r30> = #<_offsets_r>
-				
-					(change coords system)
-					G#<_off_rot_coord_system>
-				
-					#<start_y30>  = [#<offset_y30> + #<first_y30>]
-					#<items_yr30> = 0
-					#<x_step30>   = 1
-					#<x_round30>  = 0
-					#<start_x30>  = [#<offset_x30> + #<first_x30>]
-					#<items_xr30> = 0
-					o<rect-array_007_loop_Y> repeat [1]
-						o<rect-array_007_loop_X> repeat [#<ic>]
-							(get rotated coordinates then apply to new coords)
-							#<rot30> = [#<offset_r30> + 0.0 + #<items_xr30> + #<items_yr30>]
-							o<rotate_xy> CALL [#<start_x30>] [#<start_y30>] [#<offset_x30> + [[[#<ironwidth> + #<iron_margin>]]/2]] [#<offset_y30> + [#<wp_width> / 2]] [#<offset_r30> + 0.0]
-							o<rect-array_007_change_coords> if [#<_has_z_axis>]
-								G10 L2 P#5220 X[#<_rotated_x>] Y[#<_rotated_y>] Z#<offset_z30> R[#<rot30>]
-							o<rect-array_007_change_coords> else
-								G10 L2 P#5220 X[#<_rotated_x>] Y[#<_rotated_y>] R[#<rot30>]
-							o<rect-array_007_change_coords> endif
-				
-							(begin Center_Drills items)
-
-
-							(begin Center Drill Fixture Holes)
-							(regular group authors : Nick Drobchenko and Fernand Veilleux)
-							o<group_021_active> if [1]
-							
-								(begin Center Drill Fixture Holes items)
-
-
-									(begin 1 in Circle)
-									(radial array authors : Nick Drobchenko and Fernand Veilleux)
-									
-									o<circ-array_025_active> if [1]
-										(calc radius)
-										o<circ-array_025_option> if [1 EQ 0] (distance is radius)
-											#<radius32> = [0.667]
-										o<circ-array_025_option> elseif [1 EQ 1] (distance is diameter)
-											#<radius32> = [0.667 / 2]
-										o<circ-array_025_option> else (distance is between groups of items)
-											o<circ-array_025_optiona> if [[360 MOD 360] EQ 0]
-												#<radius32> = [0.667 / 2 / SIN[180 / 3]]
-											o<circ-array_025_optiona> else
-												#<radius32> = [0.667 / SIN[360 / 3]]
-											o<circ-array_025_optiona> endif
-										o<circ-array_025_option> endif
-									
-										o<circ-array_025_fill> if [[[360 MOD 360] NE 0] AND [3 GT 1]]
-											#<fill32> = [360 * 3 / [3 - 1]]
-										o<circ-array_025_fill> else
-											#<fill32> = 360
-										o<circ-array_025_fill> endif
-									
-										(get and save current coords system offsets)
-										#<old_coord_system32> = [#<_coord_system> / 10]
-										o<get_offsets> CALL
-										#<offset_x32> = #<_offsets_x>
-										#<offset_y32> = #<_offsets_y>
-										#<offset_z32> = #<_offsets_z>
-										#<offset_r32> = #<_offsets_r>
-									
-										(calc new offsets)
-										#<cx32>    = [#<_offsets_x> + 0]
-										#<cy32>    = [#<_offsets_y> + 0]
-										#<angle32> = [#<_offsets_r> + [ 150 + #<iron_rotation> ]]
-									
-										(change coords system)
-										G#<_off_rot_coord_system>
-									
-										o<circ-array_025_loop> repeat [3]
-											(get rotated coordinates then apply to new coords)
-											o<rotate_xy> CALL [#<cx32> + #<radius32>] [#<cy32>] [#<cx32>] [#<cy32>] [#<angle32>]
-									
-											o<circ-array_025_change_coords> if [#<_has_z_axis>]
-												o<circ-array_025_rotate_choice> if [1] (enable rotations of items)
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> Z#<offset_z32> R#<angle32>
-												o<circ-array_025_rotate_choice> else
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> Z#<offset_z32> R#<offset_r32>
-												o<circ-array_025_rotate_choice> endif
-											o<circ-array_025_change_coords> else
-												o<circ-array_025_rotate_choice0> if [1] (enable rotations of items)
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> R#<angle32>
-												o<circ-array_025_rotate_choice0> else
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> R#<offset_r32>
-												o<circ-array_025_rotate_choice0> endif
-											o<circ-array_025_change_coords> endif
-									
-											(begin 1 in Circle items)
-
-
-											(begin Drill Single)
-											(drill a single hole author : Fernand Veilleux)
-											
-											o<drill-one_032_active> if [1 AND [#<_tool_usage> EQ 3]] (if active)
-												o<select> CALL [31] [1] [0.0] [#<surface>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-												o<select> CALL [32] [7] [-0.072] [#<bottom_through>] [#<surface> + #<center_drill_depth>] [#<bottom>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [#<ball_depth_01875>]
-											
-												o<set_spindle_rpm> CALL [#<_drill_rpm>] [#<_drill_feed>]
-											
-												o<drill_single> CALL [0] [0] [#31] [#32] [#<drill_diameter>] [#<drill_point_len>] [1]
-											
-												o<drill-one_032_stop> if [#<_spindle_all_time> EQ 0]
-													M9 M5
-												o<drill-one_032_stop> endif
-											
-											o<drill-one_032_active> endif
-											(end Drill Single)
-
-
-											(end 1 in Circle items)
-									
-											(angular increment)
-											#<angle32>  = [#<angle32> + #<fill32> / 3]
-										o<circ-array_025_loop> endrepeat
-									
-										(restore coordinate system)
-										G#<old_coord_system32>
-										o<circ-array_025_restore_coords> if [#<_has_z_axis>]
-											G10 L2 P#5220 X#<offset_x32> Y#<offset_y32> Z#<offset_z32> R#<offset_r32>
-										o<circ-array_025_restore_coords> else
-											G10 L2 P#5220 X#<offset_x32> Y#<offset_y32> R#<offset_r32>
-										o<circ-array_025_restore_coords> endif
-									
-									o<circ-array_025_active> endif
-									(end 1 in Circle)
-
-
-									(begin 2 in Circle)
-									(radial array authors : Nick Drobchenko and Fernand Veilleux)
-									
-									o<circ-array_026_active> if [1]
-										(calc radius)
-										o<circ-array_026_option> if [1 EQ 0] (distance is radius)
-											#<radius34> = [0.9]
-										o<circ-array_026_option> elseif [1 EQ 1] (distance is diameter)
-											#<radius34> = [0.9 / 2]
-										o<circ-array_026_option> else (distance is between groups of items)
-											o<circ-array_026_optiona> if [[360 MOD 360] EQ 0]
-												#<radius34> = [0.9 / 2 / SIN[180 / 3]]
-											o<circ-array_026_optiona> else
-												#<radius34> = [0.9 / SIN[360 / 3]]
-											o<circ-array_026_optiona> endif
-										o<circ-array_026_option> endif
-									
-										o<circ-array_026_fill> if [[[360 MOD 360] NE 0] AND [3 GT 1]]
-											#<fill34> = [360 * 3 / [3 - 1]]
-										o<circ-array_026_fill> else
-											#<fill34> = 360
-										o<circ-array_026_fill> endif
-									
-										(get and save current coords system offsets)
-										#<old_coord_system34> = [#<_coord_system> / 10]
-										o<get_offsets> CALL
-										#<offset_x34> = #<_offsets_x>
-										#<offset_y34> = #<_offsets_y>
-										#<offset_z34> = #<_offsets_z>
-										#<offset_r34> = #<_offsets_r>
-									
-										(calc new offsets)
-										#<cx34>    = [#<_offsets_x> + 0]
-										#<cy34>    = [#<_offsets_y> + 0]
-										#<angle34> = [#<_offsets_r> + [ -30 + #<iron_rotation> ]]
-									
-										(change coords system)
-										G#<_off_rot_coord_system>
-									
-										o<circ-array_026_loop> repeat [3]
-											(get rotated coordinates then apply to new coords)
-											o<rotate_xy> CALL [#<cx34> + #<radius34>] [#<cy34>] [#<cx34>] [#<cy34>] [#<angle34>]
-									
-											o<circ-array_026_change_coords> if [#<_has_z_axis>]
-												o<circ-array_026_rotate_choice> if [1] (enable rotations of items)
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> Z#<offset_z34> R#<angle34>
-												o<circ-array_026_rotate_choice> else
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> Z#<offset_z34> R#<offset_r34>
-												o<circ-array_026_rotate_choice> endif
-											o<circ-array_026_change_coords> else
-												o<circ-array_026_rotate_choice0> if [1] (enable rotations of items)
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> R#<angle34>
-												o<circ-array_026_rotate_choice0> else
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> R#<offset_r34>
-												o<circ-array_026_rotate_choice0> endif
-											o<circ-array_026_change_coords> endif
-									
-											(begin 2 in Circle items)
-
-
-											(begin Drill Single)
-											(drill a single hole author : Fernand Veilleux)
-											
-											o<drill-one_033_active> if [1 AND [#<_tool_usage> EQ 3]] (if active)
-												o<select> CALL [31] [1] [0.0] [#<surface>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-												o<select> CALL [32] [7] [-0.173] [#<bottom_through>] [#<surface> + #<center_drill_depth>] [#<bottom>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [#<ball_depth_03125>]
-											
-												o<set_spindle_rpm> CALL [#<_drill_rpm>] [#<_drill_feed>]
-											
-												o<drill_single> CALL [0] [0] [#31] [#32] [#<drill_diameter>] [#<drill_point_len>] [1]
-											
-												o<drill-one_033_stop> if [#<_spindle_all_time> EQ 0]
-													M9 M5
-												o<drill-one_033_stop> endif
-											
-											o<drill-one_033_active> endif
-											(end Drill Single)
-
-
-											(end 2 in Circle items)
-									
-											(angular increment)
-											#<angle34>  = [#<angle34> + #<fill34> / 3]
-										o<circ-array_026_loop> endrepeat
-									
-										(restore coordinate system)
-										G#<old_coord_system34>
-										o<circ-array_026_restore_coords> if [#<_has_z_axis>]
-											G10 L2 P#5220 X#<offset_x34> Y#<offset_y34> Z#<offset_z34> R#<offset_r34>
-										o<circ-array_026_restore_coords> else
-											G10 L2 P#5220 X#<offset_x34> Y#<offset_y34> R#<offset_r34>
-										o<circ-array_026_restore_coords> endif
-									
-									o<circ-array_026_active> endif
-									(end 2 in Circle)
-
-
-									(begin 3 in Circle)
-									(radial array authors : Nick Drobchenko and Fernand Veilleux)
-									
-									o<circ-array_027_active> if [0]
-										(calc radius)
-										o<circ-array_027_option> if [1 EQ 0] (distance is radius)
-											#<radius36> = [1.6]
-										o<circ-array_027_option> elseif [1 EQ 1] (distance is diameter)
-											#<radius36> = [1.6 / 2]
-										o<circ-array_027_option> else (distance is between groups of items)
-											o<circ-array_027_optiona> if [[360 MOD 360] EQ 0]
-												#<radius36> = [1.6 / 2 / SIN[180 / 3]]
-											o<circ-array_027_optiona> else
-												#<radius36> = [1.6 / SIN[360 / 3]]
-											o<circ-array_027_optiona> endif
-										o<circ-array_027_option> endif
-									
-										o<circ-array_027_fill> if [[[360 MOD 360] NE 0] AND [3 GT 1]]
-											#<fill36> = [360 * 3 / [3 - 1]]
-										o<circ-array_027_fill> else
-											#<fill36> = 360
-										o<circ-array_027_fill> endif
-									
-										(get and save current coords system offsets)
-										#<old_coord_system36> = [#<_coord_system> / 10]
-										o<get_offsets> CALL
-										#<offset_x36> = #<_offsets_x>
-										#<offset_y36> = #<_offsets_y>
-										#<offset_z36> = #<_offsets_z>
-										#<offset_r36> = #<_offsets_r>
-									
-										(calc new offsets)
-										#<cx36>    = [#<_offsets_x> + 0]
-										#<cy36>    = [#<_offsets_y> + 0]
-										#<angle36> = [#<_offsets_r> + [ 150.0 + #<iron_rotation> ]]
-									
-										(change coords system)
-										G#<_off_rot_coord_system>
-									
-										o<circ-array_027_loop> repeat [3]
-											(get rotated coordinates then apply to new coords)
-											o<rotate_xy> CALL [#<cx36> + #<radius36>] [#<cy36>] [#<cx36>] [#<cy36>] [#<angle36>]
-									
-											o<circ-array_027_change_coords> if [#<_has_z_axis>]
-												o<circ-array_027_rotate_choice> if [1] (enable rotations of items)
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> Z#<offset_z36> R#<angle36>
-												o<circ-array_027_rotate_choice> else
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> Z#<offset_z36> R#<offset_r36>
-												o<circ-array_027_rotate_choice> endif
-											o<circ-array_027_change_coords> else
-												o<circ-array_027_rotate_choice0> if [1] (enable rotations of items)
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> R#<angle36>
-												o<circ-array_027_rotate_choice0> else
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> R#<offset_r36>
-												o<circ-array_027_rotate_choice0> endif
-											o<circ-array_027_change_coords> endif
-									
-											(begin 3 in Circle items)
-
-
-											(begin Drill Single)
-											(drill a single hole author : Fernand Veilleux)
-											
-											o<drill-one_034_active> if [1 AND [#<_tool_usage> EQ 3]] (if active)
-												o<select> CALL [31] [1] [0.0] [#<surface>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-												o<select> CALL [32] [7] [-0.375] [#<bottom_through>] [#<surface> + #<center_drill_depth>] [#<bottom>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [#<ball_depth_03125>]
-											
-												o<set_spindle_rpm> CALL [#<_drill_rpm>] [#<_drill_feed>]
-											
-												o<drill_single> CALL [0] [0] [#31] [#32] [#<drill_diameter>] [#<drill_point_len>] [1]
-											
-												o<drill-one_034_stop> if [#<_spindle_all_time> EQ 0]
-													M9 M5
-												o<drill-one_034_stop> endif
-											
-											o<drill-one_034_active> endif
-											(end Drill Single)
-
-
-											(end 3 in Circle items)
-									
-											(angular increment)
-											#<angle36>  = [#<angle36> + #<fill36> / 3]
-										o<circ-array_027_loop> endrepeat
-									
-										(restore coordinate system)
-										G#<old_coord_system36>
-										o<circ-array_027_restore_coords> if [#<_has_z_axis>]
-											G10 L2 P#5220 X#<offset_x36> Y#<offset_y36> Z#<offset_z36> R#<offset_r36>
-										o<circ-array_027_restore_coords> else
-											G10 L2 P#5220 X#<offset_x36> Y#<offset_y36> R#<offset_r36>
-										o<circ-array_027_restore_coords> endif
-									
-									o<circ-array_027_active> endif
-									(end 3 in Circle)
-
-
-									(begin 4 in Circle)
-									(radial array authors : Nick Drobchenko and Fernand Veilleux)
-									
-									o<circ-array_028_active> if [0]
-										(calc radius)
-										o<circ-array_028_option> if [1 EQ 0] (distance is radius)
-											#<radius38> = [2.6]
-										o<circ-array_028_option> elseif [1 EQ 1] (distance is diameter)
-											#<radius38> = [2.6 / 2]
-										o<circ-array_028_option> else (distance is between groups of items)
-											o<circ-array_028_optiona> if [[360 MOD 360] EQ 0]
-												#<radius38> = [2.6 / 2 / SIN[180 / 3]]
-											o<circ-array_028_optiona> else
-												#<radius38> = [2.6 / SIN[360 / 3]]
-											o<circ-array_028_optiona> endif
-										o<circ-array_028_option> endif
-									
-										o<circ-array_028_fill> if [[[360 MOD 360] NE 0] AND [3 GT 1]]
-											#<fill38> = [360 * 3 / [3 - 1]]
-										o<circ-array_028_fill> else
-											#<fill38> = 360
-										o<circ-array_028_fill> endif
-									
-										(get and save current coords system offsets)
-										#<old_coord_system38> = [#<_coord_system> / 10]
-										o<get_offsets> CALL
-										#<offset_x38> = #<_offsets_x>
-										#<offset_y38> = #<_offsets_y>
-										#<offset_z38> = #<_offsets_z>
-										#<offset_r38> = #<_offsets_r>
-									
-										(calc new offsets)
-										#<cx38>    = [#<_offsets_x> + 0]
-										#<cy38>    = [#<_offsets_y> + 0]
-										#<angle38> = [#<_offsets_r> + [ -30.0 + #<iron_rotation> ]]
-									
-										(change coords system)
-										G#<_off_rot_coord_system>
-									
-										o<circ-array_028_loop> repeat [3]
-											(get rotated coordinates then apply to new coords)
-											o<rotate_xy> CALL [#<cx38> + #<radius38>] [#<cy38>] [#<cx38>] [#<cy38>] [#<angle38>]
-									
-											o<circ-array_028_change_coords> if [#<_has_z_axis>]
-												o<circ-array_028_rotate_choice> if [1] (enable rotations of items)
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> Z#<offset_z38> R#<angle38>
-												o<circ-array_028_rotate_choice> else
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> Z#<offset_z38> R#<offset_r38>
-												o<circ-array_028_rotate_choice> endif
-											o<circ-array_028_change_coords> else
-												o<circ-array_028_rotate_choice0> if [1] (enable rotations of items)
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> R#<angle38>
-												o<circ-array_028_rotate_choice0> else
-													G10 L2 P#5220 X#<_rotated_x> Y#<_rotated_y> R#<offset_r38>
-												o<circ-array_028_rotate_choice0> endif
-											o<circ-array_028_change_coords> endif
-									
-											(begin 4 in Circle items)
-
-
-											(begin Drill Single)
-											(drill a single hole author : Fernand Veilleux)
-											
-											o<drill-one_035_active> if [1 AND [#<_tool_usage> EQ 3]] (if active)
-												o<select> CALL [31] [1] [0.0] [#<surface>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-												o<select> CALL [32] [7] [0.0] [#<bottom_through>] [#<surface> + #<center_drill_depth>] [#<bottom>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [#<ball_depth_03125>]
-											
-												o<set_spindle_rpm> CALL [#<_drill_rpm>] [#<_drill_feed>]
-											
-												o<drill_single> CALL [0] [0] [#31] [#32] [#<drill_diameter>] [#<drill_point_len>] [1]
-											
-												o<drill-one_035_stop> if [#<_spindle_all_time> EQ 0]
-													M9 M5
-												o<drill-one_035_stop> endif
-											
-											o<drill-one_035_active> endif
-											(end Drill Single)
-
-
-											(end 4 in Circle items)
-									
-											(angular increment)
-											#<angle38>  = [#<angle38> + #<fill38> / 3]
-										o<circ-array_028_loop> endrepeat
-									
-										(restore coordinate system)
-										G#<old_coord_system38>
-										o<circ-array_028_restore_coords> if [#<_has_z_axis>]
-											G10 L2 P#5220 X#<offset_x38> Y#<offset_y38> Z#<offset_z38> R#<offset_r38>
-										o<circ-array_028_restore_coords> else
-											G10 L2 P#5220 X#<offset_x38> Y#<offset_y38> R#<offset_r38>
-										o<circ-array_028_restore_coords> endif
-									
-									o<circ-array_028_active> endif
-									(end 4 in Circle)
-
-
-									(begin Drill Single)
-									(drill a single hole author : Fernand Veilleux)
-									
-									o<drill-one_036_active> if [1 AND [#<_tool_usage> EQ 3]] (if active)
-										o<select> CALL [31] [1] [0.1] [#<surface>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-										o<select> CALL [32] [0] [-0.03] [#<bottom_through>] [#<surface> + #<center_drill_depth>] [#<bottom>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-									
-										o<set_spindle_rpm> CALL [#<_drill_rpm>] [#<_drill_feed>]
-									
-										o<drill_single> CALL [[[ #<ironwidth> + #<iron_margin> ] /2]] [0] [#31] [#32] [#<drill_diameter>] [#<drill_point_len>] [1]
-									
-										o<drill-one_036_stop> if [#<_spindle_all_time> EQ 0]
-											M9 M5
-										o<drill-one_036_stop> endif
-									
-									o<drill-one_036_active> endif
-									(end Drill Single)
-
-
-								(end Center Drill Fixture Holes items)
-							
-							o<group_021_active> endif
-							(end Center Drill Fixture Holes)
-
-
-							(end Center_Drills items)
-				
-							#<x_round30> = [#<x_round30> + #<x_step30>]
-							o<rect-array_007_inc> if [[#<x_round30> LT #<ic>] AND [#<x_round30> GT 0]]
-								#<start_x30>  = [#<start_x30>  + [#<ironwidth> + #<iron_margin>] * #<x_step30>]
-								#<items_xr30> = [#<items_xr30> + 0 * #<x_step30>]
-							o<rect-array_007_inc> endif
-						o<rect-array_007_loop_X> endrepeat
-				
-						#<x_step30>   = [#<x_step30>   * -1]
-						#<start_y30>  = [#<start_y30>  + [#<ironwidth> + #<iron_margin>]]
-						#<items_yr30> = [#<items_yr30> + 0]
-					o<rect-array_007_loop_Y> endrepeat
-				
-					(restore coordinate system)
-					G#<old_coord_system30>
-					o<rect-array_007_restore_coords> if [#<_has_z_axis>]
-						G10 L2 P#5220 X#<offset_x30> Y#<offset_y30> Z#<offset_z30> R#<offset_r30>
-					o<rect-array_007_restore_coords> else
-						G10 L2 P#5220 X#<offset_x30> Y#<offset_y30> R#<offset_r30>
-					o<rect-array_007_restore_coords> endif
-				
-				o<rect-array_007_active> endif
-				(end Center_Drills)
-
-
-				(begin GCode)
-				(custom gcode lines author : Fernand Veilleux)
-				
-				o<g-code_014_active> if [1]
-				
-					G0 G53 Z0
-				
-				o<g-code_014_active> endif
-				(end GCode)
-
-
-			(end ALL SPOT DRILLS items)
-		
-		o<group_020_active> endif
-		(end ALL SPOT DRILLS)
-
-
-		(begin Mill_Hole)
-		(rectangular array author : Fernand Veilleux)
-		
-		o<rect-array_005_active> if [1]
-			o<select> CALL [31] [0] [[[[#<ironwidth> + #<iron_margin>]]/2]] [[[[#<ironwidth> + #<iron_margin>]]/2] - [#<ic> - 1] * [#<ironwidth> + #<iron_margin>] / 2] [[[[#<ironwidth> + #<iron_margin>]]/2] - [#<ic> - 1] * [#<ironwidth> + #<iron_margin>]]
-			#<first_x42> = #31
-		
-			o<select> CALL [31] [2] [[#<wp_width> / 2] - [1 - 1] * [#<ironwidth> + #<iron_margin>]] [[#<wp_width> / 2] - [1 - 1] * [#<ironwidth> + #<iron_margin>] / 2] [[#<wp_width> / 2]]
-			#<first_y42> = #31
-		
-			(get and save current coords system offsets)
-			#<old_coord_system42> = [#<_coord_system> / 10]
-			o<get_offsets> CALL
-			#<offset_x42> = #<_offsets_x>
-			#<offset_y42> = #<_offsets_y>
-			#<offset_z42> = #<_offsets_z>
-			#<offset_r42> = #<_offsets_r>
-		
-			(change coords system)
-			G#<_off_rot_coord_system>
-		
-			#<start_y42>  = [#<offset_y42> + #<first_y42>]
-			#<items_yr42> = 0
-			#<x_step42>   = 1
-			#<x_round42>  = 0
-			#<start_x42>  = [#<offset_x42> + #<first_x42>]
-			#<items_xr42> = 0
-			o<rect-array_005_loop_Y> repeat [1]
-				o<rect-array_005_loop_X> repeat [#<ic>]
-					(get rotated coordinates then apply to new coords)
-					#<rot42> = [#<offset_r42> + 0.0 + #<items_xr42> + #<items_yr42>]
-					o<rotate_xy> CALL [#<start_x42>] [#<start_y42>] [#<offset_x42> + [[[#<ironwidth> + #<iron_margin>]]/2]] [#<offset_y42> + [#<wp_width> / 2]] [#<offset_r42> + 0.0]
-					o<rect-array_005_change_coords> if [#<_has_z_axis>]
-						G10 L2 P#5220 X[#<_rotated_x>] Y[#<_rotated_y>] Z#<offset_z42> R[#<rot42>]
-					o<rect-array_005_change_coords> else
-						G10 L2 P#5220 X[#<_rotated_x>] Y[#<_rotated_y>] R[#<rot42>]
-					o<rect-array_005_change_coords> endif
-		
-					(begin Mill_Hole items)
-
-
-					(begin Drill Tap Hole)
-					(regular group authors : Nick Drobchenko and Fernand Veilleux)
-					o<group_016_active> if [1]
-					
-						(begin Drill Tap Hole items)
-
-
-							(begin Tool Change)
-							(tool change params and changing code author : Fernand Veilleux)
-							
-							#<_drill_feed>       =  6.0
-							#<_drill_retract>    =  0.02
-							#<_drill_mode>       =  73
-							#<_drill_dwell>      =  1.0
-							#<_drill_q>          =  0.03
-							#<_drill_rpm>        =  3800
-							#<_spindle_dir>      =  3
-							#<_cooling_mode>     =  8
-							
-							#<_feed_normal>      =  12.0
-							#<_rpm_normal>       =  3800
-							#<_feed_vertical>    =  6.0
-							#<_penetration_mode> =  0
-							#<_depth_step>       =  -0.25
-							#<_ramp_down_ratio>  = [20 / 100]
-							#<_tool_usage>       =  0
-							#<_stepover_min>     =  0.015
-							#<_stepover_normal>  = [60 / 100]
-							#<_thread_cut_depth> =  0.2
-							#<_thread_cut_teeth> =  1
-							#<_thread_lead_in>   =  0.040
-							#<_tool_dynamic_dia> =  0.0
-							
-							o<tool_change_012_usage> if [#<_tool_usage> EQ 3]
-								o<select> CALL [31] [0] [0.001] [0.3125] [0.2362] [0.1285] [0.257] [0]
-								#<drill_diameter> = #31
-								o<tool_change_012_metric> if [[#<_metric> EQ 1] AND [0 NE 0]]
-									#<drill_diameter> = [#<drill_diameter> * 25.4]
-								o<tool_change_012_metric> endif
-							
-								#<drill_point_len> = [[#<drill_diameter> / 2] / TAN[118 / 2]]
-								(print,Drill info : diameter = #<drill_diameter>, point angle = 118 &#176;, point length = #<drill_point_len>)
-							o<tool_change_012_usage> endif
-							
-							o<tool_change_012_act> if [1 AND [10 NE #5400]]
-								M9
-								T10 M6
-							o<tool_change_012_act> endif
-							
-							o<tool_change_012_lc> if [1 GE 1]
-								G43 H10
-							o<tool_change_012_lc> endif
-							
-							o<tool_change_012_01> if [#<_spindle_dir> GT 0]
-								o<tool_change_012_02> if [0 EQ 3]
-									o<set_spindle_rpm> CALL [#<_drill_rpm>]
-									F#<_drill_feed>
-								o<tool_change_012_02> else
-									o<set_feed_rate_and_speed> CALL [1]
-								o<tool_change_012_02> endif
-							
-							o<tool_change_012_01> endif
-							(end Tool Change)
-
-
-							(begin Circle by Center)
-							(circle from center author : Fernand Veilleux)
-							
-							o<circle_003_active> if [1] (if active)
-								o<select> CALL [31] [1] [0.0] [#<surface>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-								o<select> CALL [32] [0] [-0.64] [#<bottom_through>] [#<bottom>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [-[#<wp_depth> - 0.110]]
-							
-								o<select> CALL [33] [1] [0.316 / 2] [0] [-0.316 / 2]
-								o<select> CALL [34] [1] [-0.316 / 2] [0] [0.316 / 2]
-							
-								o<circle> CALL [0.0 + #33] [0.0 + #34] [0.316] [0] [0.0] [0] [3] [#31] [#32] [1] [3] [0.003] [1]
-							
-							o<circle_003_active> endif
-							(end Circle by Center)
-
-
-							(begin GCode)
-							(custom gcode lines author : Fernand Veilleux)
-							
-							o<g-code_012_active> if [1]
-							
-								#500=0
-							
-							o<g-code_012_active> endif
-							(end GCode)
-
-
-						(end Drill Tap Hole items)
-					
-					o<group_016_active> endif
-					(end Drill Tap Hole)
-
-
-					(end Mill_Hole items)
-		
-					#<x_round42> = [#<x_round42> + #<x_step42>]
-					o<rect-array_005_inc> if [[#<x_round42> LT #<ic>] AND [#<x_round42> GT 0]]
-						#<start_x42>  = [#<start_x42>  + [#<ironwidth> + #<iron_margin>] * #<x_step42>]
-						#<items_xr42> = [#<items_xr42> + 0 * #<x_step42>]
-					o<rect-array_005_inc> endif
-				o<rect-array_005_loop_X> endrepeat
-		
-				#<x_step42>   = [#<x_step42>   * -1]
-				#<start_y42>  = [#<start_y42>  + [#<ironwidth> + #<iron_margin>]]
-				#<items_yr42> = [#<items_yr42> + 0]
-			o<rect-array_005_loop_Y> endrepeat
-		
-			(restore coordinate system)
-			G#<old_coord_system42>
-			o<rect-array_005_restore_coords> if [#<_has_z_axis>]
-				G10 L2 P#5220 X#<offset_x42> Y#<offset_y42> Z#<offset_z42> R#<offset_r42>
-			o<rect-array_005_restore_coords> else
-				G10 L2 P#5220 X#<offset_x42> Y#<offset_y42> R#<offset_r42>
-			o<rect-array_005_restore_coords> endif
-		
-		o<rect-array_005_active> endif
-		(end Mill_Hole)
-
-
-		(begin GCode)
-		(custom gcode lines author : Fernand Veilleux)
-		
-		o<g-code_013_active> if [1]
-		
-			G0 G53 Z0
-		
-		o<g-code_013_active> endif
-		(end GCode)
-
-
-		(begin Mill_Threads)
-		(rectangular array author : Fernand Veilleux)
-		
-		o<rect-array_006_active> if [1]
-			o<select> CALL [31] [0] [[[[#<ironwidth> + #<iron_margin>]]/2]] [[[[#<ironwidth> + #<iron_margin>]]/2] - [#<ic> - 1] * [#<ironwidth> + #<iron_margin>] / 2] [[[[#<ironwidth> + #<iron_margin>]]/2] - [#<ic> - 1] * [#<ironwidth> + #<iron_margin>]]
-			#<first_x48> = #31
-		
-			o<select> CALL [31] [2] [[#<wp_width> / 2] - [1 - 1] * [#<ironwidth> + #<iron_margin>]] [[#<wp_width> / 2] - [1 - 1] * [#<ironwidth> + #<iron_margin>] / 2] [[#<wp_width> / 2]]
-			#<first_y48> = #31
-		
-			(get and save current coords system offsets)
-			#<old_coord_system48> = [#<_coord_system> / 10]
-			o<get_offsets> CALL
-			#<offset_x48> = #<_offsets_x>
-			#<offset_y48> = #<_offsets_y>
-			#<offset_z48> = #<_offsets_z>
-			#<offset_r48> = #<_offsets_r>
-		
-			(change coords system)
-			G#<_off_rot_coord_system>
-		
-			#<start_y48>  = [#<offset_y48> + #<first_y48>]
-			#<items_yr48> = 0
-			#<x_step48>   = 1
-			#<x_round48>  = 0
-			#<start_x48>  = [#<offset_x48> + #<first_x48>]
-			#<items_xr48> = 0
-			o<rect-array_006_loop_Y> repeat [1]
-				o<rect-array_006_loop_X> repeat [#<ic>]
-					(get rotated coordinates then apply to new coords)
-					#<rot48> = [#<offset_r48> + 0.0 + #<items_xr48> + #<items_yr48>]
-					o<rotate_xy> CALL [#<start_x48>] [#<start_y48>] [#<offset_x48> + [[[#<ironwidth> + #<iron_margin>]]/2]] [#<offset_y48> + [#<wp_width> / 2]] [#<offset_r48> + 0.0]
-					o<rect-array_006_change_coords> if [#<_has_z_axis>]
-						G10 L2 P#5220 X[#<_rotated_x>] Y[#<_rotated_y>] Z#<offset_z48> R[#<rot48>]
-					o<rect-array_006_change_coords> else
-						G10 L2 P#5220 X[#<_rotated_x>] Y[#<_rotated_y>] R[#<rot48>]
-					o<rect-array_006_change_coords> endif
-		
-					(begin Mill_Threads items)
-
-
-					(begin Threadmill)
-					(regular group authors : Nick Drobchenko and Fernand Veilleux)
-					o<group_017_active> if [1]
-					
-						(begin Threadmill items)
-
-
-							(begin Thread Mill Change)
-							(thread mill change params and changing code author : Fernand Veilleux)
-							
-							#<_spindle_dir>      =  3
-							#<_cooling_mode>     =  8
-							
-							#<_feed_normal>      =  12.0
-							#<_rpm_normal>       =  3000
-							#<_feed_vertical>    =  12.0
-							#<_tool_usage>       =  4
-							#<_thread_cut_depth> =  0.03
-							#<_thread_cut_teeth> =  1
-							#<_thread_lead_in>   =  0.02
-							
-							o<tmill_chng_005_tlc> if [[1 EQ 3] AND [6 GT 0]]
-								M61 Q6
-							o<tmill_chng_005_tlc> endif
-							
-							o<tmill_chng_005_act> if [1 AND [6 NE #5400]]
-								M9
-								T6 M6
-							o<tmill_chng_005_act> endif
-							
-							o<tmill_chng_005_lc> if [[1 EQ 1] OR [1 EQ 2]]
-								G43 H6
-							o<tmill_chng_005_lc> endif
-							
-							o<tmill_chng_005_01> if [[#<_spindle_dir> GT 0] AND #<_spindle_all_time>]
-								o<set_feed_rate_and_speed> CALL [1]
-							o<tmill_chng_005_01> endif
-							(end Thread Mill Change)
-
-
-							(begin Thread Milling)
-							(authors : Fernand Veilleux and Philip Mullen)
-							
-							o<thread-milling_005_active> if [1 AND [#<_tool_usage> EQ 4]] (if active)
-								o<select> CALL [31] [1] [0.0] [#<surface>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [0]
-								o<select> CALL [32] [6] [-0.25] [#<bottom_through>] [#<bottom>] [#<surface> - #<wp_depth> / 2] [#<surface> - #<wp_depth> / 4] [#<bottom> + #<wp_depth> / 4] [-[0.75 - [0.110+.038]]]
-							
-								o<thread-milling> CALL [0.0] [1] [0.0] [1] [0.38] [0.316] [16.0] [1] [1] [0.0] [2] [3] [#31] [#32] [1] [0]
-							
-							o<thread-milling_005_active> endif
-							(end Thread Milling)
-
-
-						(end Threadmill items)
-					
-					o<group_017_active> endif
-					(end Threadmill)
-
-
-					(end Mill_Threads items)
-		
-					#<x_round48> = [#<x_round48> + #<x_step48>]
-					o<rect-array_006_inc> if [[#<x_round48> LT #<ic>] AND [#<x_round48> GT 0]]
-						#<start_x48>  = [#<start_x48>  + [#<ironwidth> + #<iron_margin>] * #<x_step48>]
-						#<items_xr48> = [#<items_xr48> + 0 * #<x_step48>]
-					o<rect-array_006_inc> endif
-				o<rect-array_006_loop_X> endrepeat
-		
-				#<x_step48>   = [#<x_step48>   * -1]
-				#<start_y48>  = [#<start_y48>  + [#<ironwidth> + #<iron_margin>]]
-				#<items_yr48> = [#<items_yr48> + 0]
-			o<rect-array_006_loop_Y> endrepeat
-		
-			(restore coordinate system)
-			G#<old_coord_system48>
-			o<rect-array_006_restore_coords> if [#<_has_z_axis>]
-				G10 L2 P#5220 X#<offset_x48> Y#<offset_y48> Z#<offset_z48> R#<offset_r48>
-			o<rect-array_006_restore_coords> else
-				G10 L2 P#5220 X#<offset_x48> Y#<offset_y48> R#<offset_r48>
-			o<rect-array_006_restore_coords> endif
-		
-		o<rect-array_006_active> endif
-		(end Mill_Threads)
-
-
-	(end All Cutting items)
-
-o<group_014_active> endif
-(end All Cutting)
+(begin End Mill Change)
+(end mill change params and changing code author : Fernand Veilleux)
+
+#<_spindle_dir>      =  3
+#<_cooling_mode>     =  8
+
+#<_feed_normal>      =  9.842520
+#<_rpm_normal>       =  1000
+#<_feed_vertical>    =  7.874016
+#<_penetration_mode> =  0
+#<_depth_step>       =  -0.118110
+#<_ramp_down_ratio>  = [25 / 100]
+#<_tool_usage>       =  0
+#<_stepover_min>     =  0.015748
+#<_stepover_normal>  = [60 / 100]
+#<_tool_dynamic_dia> =  0.000000
+
+o<emill_chng_001_tlc> if [[3 EQ 3] AND [0 GT 0]]
+	M61 Q0
+o<emill_chng_001_tlc> endif
+
+o<emill_chng_001_act> if [1 AND [0 NE #5400]]
+	M9
+	T0 M6
+o<emill_chng_001_act> endif
+
+o<emill_chng_001_lc> if [[3 EQ 1] OR [3 EQ 2]]
+	G43 H0
+o<emill_chng_001_lc> endif
+
+o<emill_chng_001_01> if [[#<_spindle_dir> GT 0] AND #<_spindle_all_time>]
+	o<set_feed_rate_and_speed> CALL [1]
+o<emill_chng_001_01> endif
+(end End Mill Change)
 
  
 M2

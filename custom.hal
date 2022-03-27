@@ -1,2 +1,6 @@
 # Include your customized HAL commands here
 # This file will not be overwritten when you run stepconf again
+
+# oiler
+net pumpon hm2_7i76e.0.7i76.0.0.output-02
+setp hm2_7i76e.0.stepgen.02.direction.invert_output 1

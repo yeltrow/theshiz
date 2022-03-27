@@ -1,0 +1,13 @@
+#oiler.hal
+
+# -W waits on the userspace component to load
+loadusr -W ./oilerctl
+
+net moving <= motion.current-vel
+
+net moving => oilerctl.velocity
+setp oilerctl.offseconds 1350
+setp oilerctl.onseconds 1350
+setp oilerctl.debounceseconds 60
+net pumpon oilerctl.oiler-cmd 
+
