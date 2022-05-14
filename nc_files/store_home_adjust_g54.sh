@@ -37,7 +37,8 @@ axis-remote --mdi "G28.1"
 axis-remote --mdi "G54"
 axis-remote --mdi "M61 Q0"
 axis-remote --mdi "G43"
-axis-remote --mdi "G10 L20 P1 X-0.245 Y11.3658 Z1.6147"
+#axis-remote --mdi "G10 L20 P1 X-0.245 Y11.3658 Z1.6147"
+axis-remote --mdi "G10 L20 P1 X-0.0326 Y11.3659 Z1.7198"
 
  
 

@@ -8,7 +8,7 @@ T20 P20 D0.500000 ;countersink 0.5in 90deg
 T21 P21 D1.000000 Z-0.374922 ;1in end mill 
 T22 P22 D3.000000 ;3in shell mill 
 T7 P7 D0.875000 Z+0.999000 ;tap holder 
-T8 P8 D0.125000 Z-0.476598 ;0.125 60 degree chamfer bit 
+T8 P8 D0.125000 Z-0.478098 ;0.125 60 degree chamfer bit 
 T9 P9 D0.375000 Z+2.734410 ;drill chuck 
 T12 P12 D0.500000 Z+0.037822 ;1/2 3 flute carbide 
 T23 P23 D0.312500 Z-0.507977 ;5/16 ball mill 
@@ -17,4 +17,4 @@ T13 P13 D0.500000 ;.5 endmill
 T10 P10 D0.250000 Z+0.121121 ;0.25 3fl carbide x 0.75 
 T15 P15 D0.312500 Z+0.059667 ;5/16 drill mill 
 T18 P18 D0.375000 Z-0.117557 ;0.375 x 90 mill drill 4 fl 
-T19 P19 D0.062500 Z-0.233644 ;1/16 flat end mill 
+T19 P19 D0.062500 Z-0.361097 ;1/16 flat end mill 
