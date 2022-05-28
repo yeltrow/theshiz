@@ -103,3 +103,7 @@ net rapid-to-tool-change-pos hwpanel.0.NONEBUT
 # MDI Command G0 G53 Z0 Machine coordinate move G53
 net rapid-to-tool-change-pos halui.mdi-command-00
 
+# COOLANT
+net coolant-sw-on hwpanel.0.COOLANTON
+net coolant-sw-off hwpanel.0.COOLANTOFF
+
