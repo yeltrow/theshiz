@@ -1,20 +1,21 @@
-T1 P1 D0.200000 ;edge finder 
-T2 P2 D0.125000 Z-0.282662 ;1/8 flat er holder 
-T3 P3 D0.750000 Z-0.153099 ;center drill 0.25x0.75 
-T4 P4 D4.000000 ;face mill 
-T6 P6 D0.290000 Z+0.036302 ;threadmill 
-T5 P5 D0.625000 Z+0.003027 ;5/8 end mill 2 flute 0.625 
-T20 P20 D0.500000 ;countersink 0.5in 90deg 
-T21 P21 D1.000000 Z-0.374922 ;1in end mill 
-T22 P22 D3.000000 ;3in shell mill 
-T7 P7 D0.875000 Z+0.999000 ;tap holder 
-T8 P8 D0.125000 Z-0.476598 ;0.125 60 degree chamfer bit 
-T9 P9 D0.375000 Z+2.734410 ;drill chuck 
-T12 P12 D0.500000 Z+0.037822 ;1/2 3 flute carbide 
-T23 P23 D0.312500 Z-0.507977 ;5/16 ball mill 
-T14 P14 D0.250000 Z-0.333643 ;0.25 flat end mill 
-T13 P13 D0.500000 ;.5 endmill 
-T10 P10 D0.250000 Z+0.121121 ;0.25 3fl carbide x 0.75 
-T15 P15 D0.312500 Z+0.059667 ;5/16 drill mill 
-T18 P18 D0.375000 Z-0.117557 ;0.375 x 90 mill drill 4 fl 
-T19 P19 D0.062500 Z-0.233644 ;1/16 flat end mill 
+T1 P1 D0.2 ;edge finder 
+T2 P2 Z-0.282662 D0.125 ;1/8 flat er holder 
+T3 P3 Z-0.153099 D0.75 ;center drill 0.25x0.75 
+T4 P4 D4 ;face mill 
+T6 P6 Z0.036302 D0.29 ;threadmill 
+T5 P5 Z0.003027 D0.625 ;5/8 end mill 2 flute 0.625 
+T20 P20 D0.5 ;countersink 0.5in 90deg 
+T21 P21 Z-0.374922 D1 ;1in end mill 
+T22 P22 D3 ;3in shell mill 
+T7 P7 Z0.999 D0.875 ;tap holder 
+T8 P8 Z-0.478098 D0.125 ;0.125 60 degree chamfer bit 
+T9 P9 Z2.73441 D0.375 ;drill chuck 
+T12 P12 Z0.037822 D0.5 ;1/2 3 flute carbide 
+T23 P23 Z-0.507977 D0.3125 ;5/16 ball mill 
+T14 P14 Z-0.333643 D0.25 ;0.25 flat end mill 
+T13 P13 D0.5 ;.5 endmill 
+T10 P10 Z0.121121 D0.25 ;0.25 3fl carbide x 0.75 
+T15 P15 Z0.059667 D0.3125 ;5/16 drill mill 
+T18 P18 Z-0.117557 D0.375 ;0.375 x 90 mill drill 4 fl 
+T19 P19 Z-0.361097 D0.0625 ;1/16 flat end mill 
+T26 P26 Z-0.495745 D0.512 ;0.510 seat cutter 0.093 high 
