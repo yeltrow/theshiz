@@ -1,0 +1,32 @@
+loadrt mux_generic config="bb4" names="mux-coolant"
+
+# Add these to the hwpanel.hal file
+# Hardware panel buttons that control coolant
+net coolant-sw-on hwpanel.0.COOLANTON
+net coolant-sw-off hwpanel.0.COOLANTOFF
+
+# Remove the automatically set coolant control pin from the
+# coolant-flood net
+unlinkp iocontrol.0.coolant-flood
+net coolant-from-progam iocontrol.0.coolant-flood
+
+# The two positions of the hardware switch set the input we listen
+# to for the coolant pump control
+
+net coolant-sw-on mux-coolant.00.sel-bit-00
+net coolant-sw-off mux-coolant.00.sel-bit-01
+
+# 00 = auto 
+net coolant-from-program mux-coolant.00.in-bit-00
+# 01 = man on
+setp mux-coolant.00.in-bit-01 1
+# 10 = man off
+setp mux-coolant.00.in-bit-02 0
+# 11 = man off, not possible
+setp mux-coolant.00.in-bit-03 0
+
+# Connect the output of the mux to net linked to the real io lines
+net coolant-flood mux-coolant.00.out-bit
+
+addf mux-coolant servo-thread
+
