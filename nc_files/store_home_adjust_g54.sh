@@ -23,6 +23,7 @@
 #     G28 can be used to verify 0,0,0 and the offsets in the screenshot
 #     at any time.
 # Set the current tool to 0, no tool.
+axis-remote --mdi "G92.1"
 axis-remote --mdi "M61 Q0"
 # Set the tool length offset to active.
 # makes sure we are using 0,0,0 for tool length offset.
@@ -37,7 +38,7 @@ axis-remote --mdi "G28.1"
 axis-remote --mdi "G54"
 axis-remote --mdi "M61 Q0"
 axis-remote --mdi "G43"
-axis-remote --mdi "G10 L20 P1 X-0.245 Y11.3658 Z1.6147"
+axis-remote --mdi "G10 L20 P1 X-0.0330 Y11.3664 Z1.7196"
 
  
 
