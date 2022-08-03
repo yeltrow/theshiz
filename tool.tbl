@@ -1,5 +1,5 @@
 T1 P1 D0.200000 ;edge finder 
-T2 P2 D0.125000 Z-0.302660 ;1/8 flat er holder 
+T2 P2 D0.125000 Z-0.270280 ;1/8 flat er holder 
 T3 P3 D0.750000 Z-0.153099 ;center drill 0.25x0.75 
 T4 P4 D4.000000 ;face mill 
 T6 P6 D0.290000 Z+0.036302 ;threadmill 
