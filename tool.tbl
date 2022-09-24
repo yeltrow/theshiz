@@ -17,5 +17,5 @@ T13 P13 D0.500000 ;.5 endmill
 T10 P10 D0.250000 Z+0.121121 ;0.25 3fl carbide x 0.75 
 T15 P15 D0.312500 Z+0.059667 ;5/16 drill mill 
 T18 P18 D0.375000 Z-0.117557 ;0.375 x 90 mill drill 4 fl 
-T19 P19 D0.062500 Z-0.361097 ;1/16 flat end mill 
+T19 P19 D0.062500 Z-0.362097 ;1/16 flat end mill 
 T26 P26 D0.512000 Z-0.495745 ;0.510 seat cutter 0.093 high 
